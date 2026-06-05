@@ -1,0 +1,13 @@
+/home/joao/Documentos/EletronicaVA_Java/EletronicaAPP/src/main/java/com/eletronica/model/ServicoEntity.java
+/home/joao/Documentos/EletronicaVA_Java/EletronicaAPP/src/main/java/com/eletronica/util/Database.java
+/home/joao/Documentos/EletronicaVA_Java/EletronicaAPP/src/main/java/com/eletronica/model/ProdutoEntity.java
+/home/joao/Documentos/EletronicaVA_Java/EletronicaAPP/src/main/java/com/eletronica/model/GrupoUsuarioEntity.java
+/home/joao/Documentos/EletronicaVA_Java/EletronicaAPP/src/main/java/com/eletronica/dao/ClienteDAO.java
+/home/joao/Documentos/EletronicaVA_Java/EletronicaAPP/src/main/java/com/eletronica/model/OrdemServicoEntity.java
+/home/joao/Documentos/EletronicaVA_Java/EletronicaAPP/src/main/java/com/eletronica/controller/ClienteController.java
+/home/joao/Documentos/EletronicaVA_Java/EletronicaAPP/src/main/java/com/eletronica/App.java
+/home/joao/Documentos/EletronicaVA_Java/EletronicaAPP/src/main/java/com/eletronica/model/ClienteEntity.java
+/home/joao/Documentos/EletronicaVA_Java/EletronicaAPP/src/main/java/com/eletronica/util/TesteConexao.java
+/home/joao/Documentos/EletronicaVA_Java/EletronicaAPP/src/main/java/com/eletronica/SystemInfo.java
+/home/joao/Documentos/EletronicaVA_Java/EletronicaAPP/src/main/java/com/eletronica/model/UsuarioEntity.java
+/home/joao/Documentos/EletronicaVA_Java/EletronicaAPP/src/main/java/com/eletronica/service/ClienteService.java
