@@ -12,5 +12,8 @@ com/eletronica/controller/ProdutoController.class
 com/eletronica/model/OrdemServicoEntity.class
 com/eletronica/model/UsuarioEntity.class
 com/eletronica/util/TesteConexao.class
+com/eletronica/controller/MenuPrincipalController.class
+com/eletronica/controller/ServicoController.class
 com/eletronica/service/ClienteService.class
 com/eletronica/model/GrupoUsuarioEntity.class
+com/eletronica/dao/ServicoDAO.class
