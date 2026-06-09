@@ -15,9 +15,8 @@ public class UsuarioEntity {
     private String email;
     private String senha;
     private int idGrupoUsuario;
-    private GrupoUsuarioEntity grupoUsuario;
+    private String nomeGrupo; // Para exibir na tela (vem do JOIN)
     
-    // Construtores
     public UsuarioEntity() {}
     
     public UsuarioEntity(String nome, String email, String senha, int idGrupoUsuario) {
@@ -43,6 +42,11 @@ public class UsuarioEntity {
     public int getIdGrupoUsuario() { return idGrupoUsuario; }
     public void setIdGrupoUsuario(int idGrupoUsuario) { this.idGrupoUsuario = idGrupoUsuario; }
     
-    public GrupoUsuarioEntity getGrupoUsuario() { return grupoUsuario; }
-    public void setGrupoUsuario(GrupoUsuarioEntity grupoUsuario) { this.grupoUsuario = grupoUsuario; }
+    public String getNomeGrupo() { return nomeGrupo; }
+    public void setNomeGrupo(String nomeGrupo) { this.nomeGrupo = nomeGrupo; }
+    
+    @Override
+    public String toString() {
+        return nome;
+    }
 }

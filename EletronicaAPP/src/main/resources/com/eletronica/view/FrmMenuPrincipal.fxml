@@ -17,13 +17,14 @@
             <Label alignment="CENTER" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="Sistema de Gestão Eletrônica" />
             <HBox alignment="CENTER" prefHeight="160.0" prefWidth="854.0" spacing="15.0">
                <children>
+                  <Button fx:id="btnUsuarios" mnemonicParsing="false" prefHeight="26.0" prefWidth="184.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #3498db; -fx-text-fill: white;" text="Cadastro de Usuario" />
                   <Button fx:id="btnClientes" mnemonicParsing="false" prefHeight="26.0" prefWidth="184.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #3498db; -fx-text-fill: white;" text="Clientes" />
                   <Button fx:id="btnProdutos" mnemonicParsing="false" prefHeight="26.0" prefWidth="184.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #3498db; -fx-text-fill: white;" text="Produtos" />
-                  <Button fx:id="btnServicos" layoutX="284.0" layoutY="47.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="184.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #3498db; -fx-text-fill: white;" text="Consultar Serviços" />
-                  <Button fx:id="btnOrdens" layoutX="369.0" layoutY="47.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="184.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #3498db; -fx-text-fill: white;" text="Criar Ordem de Serviços" />
-                  <Button fx:id="btnGrupoUsuario" mnemonicParsing="false" prefHeight="26.0" prefWidth="184.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #3498db; -fx-text-fill: white;" text="Grupo Usuario" />
                </children>
             </HBox>
+            <Button fx:id="btnGrupoUsuario" mnemonicParsing="false" prefHeight="26.0" prefWidth="184.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #3498db; -fx-text-fill: white;" text="Grupo Usuario" />
+            <Button fx:id="btnOrdens" mnemonicParsing="false" prefHeight="26.0" prefWidth="184.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #3498db; -fx-text-fill: white;" text="Criar Ordem de Serviços" />
+            <Button fx:id="btnServicos" mnemonicParsing="false" prefHeight="26.0" prefWidth="184.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #3498db; -fx-text-fill: white;" text="Consultar Serviços" />
          </children>
       </VBox>
    </children>

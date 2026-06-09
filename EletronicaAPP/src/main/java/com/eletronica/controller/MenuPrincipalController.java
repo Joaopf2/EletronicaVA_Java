@@ -23,7 +23,7 @@ public class MenuPrincipalController {
     @FXML private Button btnProdutos;
     @FXML private Button btnServicos;
     @FXML private Button btnOrdens;
-    //@FXML private Button btnUsuarios;
+    @FXML private Button btnUsuarios;
     @FXML private Button btnGrupoUsuario;
     
     @FXML
@@ -46,6 +46,7 @@ public class MenuPrincipalController {
     btnProdutos.setOnAction(e -> abrirTelaProdutos());
     btnServicos.setOnAction(e -> abrirTelaServicos());
     btnOrdens.setOnAction(e -> abrirTelaOrdens());
+    btnUsuarios.setOnAction(e -> abrirTelaUsuarios());
     btnGrupoUsuario.setOnAction(e -> abrirTelaGrupoUsuarios());
     
     System.out.println("Menu inicializado com sucesso!");
@@ -99,7 +100,7 @@ public class MenuPrincipalController {
         }
     }
     
-   /* private void abrirTelaUsuarios() {
+   private void abrirTelaUsuarios() {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/com/eletronica/view/FrmUsuario.fxml"));
             Stage stage = new Stage();
@@ -109,7 +110,7 @@ public class MenuPrincipalController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }*/
+    }
     
    private void abrirTelaGrupoUsuarios() {
     System.out.println("=== ABRINDO TELA GRUPO USUARIO ===");
