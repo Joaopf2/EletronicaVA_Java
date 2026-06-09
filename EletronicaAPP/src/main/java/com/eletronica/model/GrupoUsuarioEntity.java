@@ -17,7 +17,6 @@ public class GrupoUsuarioEntity {
     private boolean manterUsuario;
     private boolean manterServico;
     
-    // Construtores
     public GrupoUsuarioEntity() {}
     
     // Getters e Setters
@@ -38,4 +37,9 @@ public class GrupoUsuarioEntity {
     
     public boolean isManterServico() { return manterServico; }
     public void setManterServico(boolean manterServico) { this.manterServico = manterServico; }
+    
+    @Override
+    public String toString() {
+        return descricao; // Para mostrar no ComboBox
+    }
 }

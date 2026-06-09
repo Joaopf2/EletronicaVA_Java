@@ -22,16 +22,33 @@ public class MenuPrincipalController {
     @FXML private Button btnClientes;
     @FXML private Button btnProdutos;
     @FXML private Button btnServicos;
-    //@FXML private Button btnOrdens;
+    @FXML private Button btnOrdens;
     //@FXML private Button btnUsuarios;
+    @FXML private Button btnGrupoUsuario;
     
     @FXML
     public void initialize() {
-        btnClientes.setOnAction(e -> abrirTelaClientes());
-        btnProdutos.setOnAction(e -> abrirTelaProdutos());
-        btnServicos.setOnAction(e -> abrirTelaServicos());
-       // btnOrdens.setOnAction(e -> abrirTelaOrdens());
-       // btnUsuarios.setOnAction(e -> abrirTelaUsuarios());
+         System.out.println("=== INICIALIZANDO MENU ===");
+    
+    // Verificar se os botões foram carregados
+    System.out.println("btnClientes: " + (btnClientes == null ? "NULL" : "OK"));
+    System.out.println("btnProdutos: " + (btnProdutos == null ? "NULL" : "OK"));
+    System.out.println("btnServicos: " + (btnServicos == null ? "NULL" : "OK"));
+    System.out.println("btnOrdens: " + (btnOrdens == null ? "NULL" : "OK"));
+    System.out.println("btnGrupoUsuario: " + (btnGrupoUsuario == null ? "NULL" : "OK"));
+    
+    if (btnGrupoUsuario == null) {
+        System.out.println("ERRO: btnGrupoUsuario está NULL! Verifique o fx:id no FXML.");
+        return;
+    }
+    
+    btnClientes.setOnAction(e -> abrirTelaClientes());
+    btnProdutos.setOnAction(e -> abrirTelaProdutos());
+    btnServicos.setOnAction(e -> abrirTelaServicos());
+    btnOrdens.setOnAction(e -> abrirTelaOrdens());
+    btnGrupoUsuario.setOnAction(e -> abrirTelaGrupoUsuarios());
+    
+    System.out.println("Menu inicializado com sucesso!");
     }
     
     private void abrirTelaClientes() {
@@ -69,7 +86,7 @@ public class MenuPrincipalController {
             e.printStackTrace();
         }
     }
-    /*
+    
     private void abrirTelaOrdens() {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/com/eletronica/view/FrmOrdemServico.fxml"));
@@ -82,7 +99,7 @@ public class MenuPrincipalController {
         }
     }
     
-    private void abrirTelaUsuarios() {
+   /* private void abrirTelaUsuarios() {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/com/eletronica/view/FrmUsuario.fxml"));
             Stage stage = new Stage();
@@ -93,4 +110,35 @@ public class MenuPrincipalController {
             e.printStackTrace();
         }
     }*/
+    
+   private void abrirTelaGrupoUsuarios() {
+    System.out.println("=== ABRINDO TELA GRUPO USUARIO ===");
+    try {
+        String caminho = "/com/eletronica/view/FrmGrupoUsuario.fxml";
+        System.out.println("Procurando arquivo: " + caminho);
+        
+        java.net.URL url = getClass().getResource(caminho);
+        if (url == null) {
+            System.out.println("ERRO: Arquivo não encontrado!");
+            System.out.println("Caminhos disponíveis:");
+            java.net.URL root = getClass().getResource("/");
+            System.out.println("Root: " + root);
+            return;
+        }
+        
+        System.out.println("Arquivo encontrado em: " + url.getPath());
+        Parent root = FXMLLoader.load(url);
+        Stage stage = new Stage();
+        stage.setTitle("Cadastro de Grupos de Usuários");
+        stage.setScene(new Scene(root, 1000, 900));
+        stage.show();
+        System.out.println("Tela aberta com sucesso!");
+        
+    } catch (Exception e) {
+        System.out.println("ERRO DETALHADO:");
+        System.out.println("Mensagem: " + e.getMessage());
+        System.out.println("Causa: " + e.getCause());
+        e.printStackTrace();
+    }
+}
 }

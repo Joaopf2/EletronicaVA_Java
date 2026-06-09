@@ -7,19 +7,21 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.eletronica.controller.MenuPrincipalController">
+<AnchorPane id="AnchorPane" prefHeight="518.0" prefWidth="886.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.eletronica.controller.MenuPrincipalController">
    <children>
-      <VBox alignment="CENTER" layoutX="-4.0" layoutY="-1.0" prefHeight="393.0" prefWidth="600.0" spacing="20.0">
+      <VBox alignment="CENTER" layoutX="-4.0" layoutY="-1.0" prefHeight="518.0" prefWidth="894.0" spacing="20.0">
          <padding>
             <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
          </padding>
          <children>
             <Label alignment="CENTER" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="Sistema de Gestão Eletrônica" />
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
+            <HBox alignment="CENTER" prefHeight="160.0" prefWidth="854.0" spacing="15.0">
                <children>
-                  <Button fx:id="btnClientes" mnemonicParsing="false" prefHeight="26.0" prefWidth="147.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #3498db; -fx-text-fill: white;" text="Clientes" />
-                  <Button fx:id="btnProdutos" mnemonicParsing="false" prefHeight="26.0" prefWidth="147.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #3498db; -fx-text-fill: white;" text="Produtos" />
-                  <Button fx:id="btnServicos" layoutX="284.0" layoutY="47.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="147.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #3498db; -fx-text-fill: white;" text="Consultar Serviços" />
+                  <Button fx:id="btnClientes" mnemonicParsing="false" prefHeight="26.0" prefWidth="184.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #3498db; -fx-text-fill: white;" text="Clientes" />
+                  <Button fx:id="btnProdutos" mnemonicParsing="false" prefHeight="26.0" prefWidth="184.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #3498db; -fx-text-fill: white;" text="Produtos" />
+                  <Button fx:id="btnServicos" layoutX="284.0" layoutY="47.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="184.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #3498db; -fx-text-fill: white;" text="Consultar Serviços" />
+                  <Button fx:id="btnOrdens" layoutX="369.0" layoutY="47.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="184.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #3498db; -fx-text-fill: white;" text="Criar Ordem de Serviços" />
+                  <Button fx:id="btnGrupoUsuario" mnemonicParsing="false" prefHeight="26.0" prefWidth="184.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #3498db; -fx-text-fill: white;" text="Grupo Usuario" />
                </children>
             </HBox>
          </children>
