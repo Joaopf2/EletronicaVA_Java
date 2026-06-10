@@ -14,6 +14,7 @@ public class UsuarioEntity {
     private String nome;
     private String email;
     private String senha;
+    private GrupoUsuarioEntity grupo;
     private int idGrupoUsuario;
     private String nomeGrupo; // Para exibir na tela (vem do JOIN)
     
@@ -44,6 +45,9 @@ public class UsuarioEntity {
     
     public String getNomeGrupo() { return nomeGrupo; }
     public void setNomeGrupo(String nomeGrupo) { this.nomeGrupo = nomeGrupo; }
+    
+    public GrupoUsuarioEntity getGrupo() { return grupo; }
+    public void setGrupo(GrupoUsuarioEntity grupo) { this.grupo = grupo; }
     
     @Override
     public String toString() {

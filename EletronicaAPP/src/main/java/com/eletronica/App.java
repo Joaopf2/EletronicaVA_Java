@@ -1,7 +1,5 @@
 package com.eletronica;
 
-
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -12,9 +10,10 @@ public class App extends Application {
     
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/com/eletronica/view/FrmMenuPrincipal.fxml"));
-        primaryStage.setTitle("Eletrônica - Sistema de Gestão");
-        primaryStage.setScene(new Scene(root, 1000, 700));
+        Parent root = FXMLLoader.load(getClass().getResource("/com/eletronica/view/FrmLogin.fxml"));
+        primaryStage.setTitle("Login - Sistema Eletrônica");
+        primaryStage.setScene(new Scene(root, 500, 450));
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
     

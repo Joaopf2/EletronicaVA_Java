@@ -3,6 +3,8 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.eletronica.controller;
+import com.eletronica.util.UsuarioSessao;
+
 
 /**
  *
@@ -68,6 +70,14 @@ public class GrupoUsuarioController {
             (obs, old, novo) -> {
                 if (novo != null) carregarCampos(novo);
             });
+    
+        if (!UsuarioSessao.podeManterUsuario()) 
+        {
+            btnSalvar.setDisable(true);
+            btnDeletar.setDisable(true);
+            txtResultado.setText("Você não tem permissão para gerenciar grupos de usuários!");
+        }
+    
     }
     
     private void carregarTabela() {

@@ -9,6 +9,7 @@ com/eletronica/model/OrdemServicoEntity.class
 com/eletronica/util/TesteConexao.class
 com/eletronica/controller/ServicoController.class
 com/eletronica/model/GrupoUsuarioEntity.class
+com/eletronica/controller/LoginController.class
 com/eletronica/dao/ServicoDAO.class
 com/eletronica/SystemInfo.class
 com/eletronica/dao/ProdutoDAO.class
@@ -19,6 +20,7 @@ com/eletronica/controller/ClienteController.class
 com/eletronica/App.class
 com/eletronica/model/OrdemServicoEntity$TipoStatus.class
 com/eletronica/model/ProdutoEntity.class
+com/eletronica/util/UsuarioSessao.class
 com/eletronica/controller/GrupoUsuarioController.class
 com/eletronica/controller/OrdemServicoController$2.class
 com/eletronica/controller/OrdemServicoController.class

@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.eletronica.controller;
+import com.eletronica.util.UsuarioSessao;
 
 /**
  *
@@ -101,6 +102,23 @@ public class OrdemServicoController {
                     carregarDetalhes(novo);
                 }
             });
+    
+    
+        if (!UsuarioSessao.podeCriarOS()) {
+        btnSalvar.setDisable(true);
+        btnNovo.setDisable(true);
+        txtResultado.setText("Você não tem permissão para criar OS!");
+    }
+    
+    if (!UsuarioSessao.podeDeletarOS()) {
+        btnDeletar.setVisible(false);
+    }
+    
+    // Mostrar perfil do usuário logado
+    txtResultado.appendText("\nUsuário: " + UsuarioSessao.getUsuarioLogado().getNome() + 
+                            " | Perfil: " + UsuarioSessao.getGrupoLogado().getDescricao());
+
+    
     }
     
     private void carregarClientes() {
@@ -275,30 +293,36 @@ public class OrdemServicoController {
     }
     
     private void deletar() {
-        OrdemServicoEntity selecionado = tblOrdens.getSelectionModel().getSelectedItem();
-        
-        if (selecionado == null) {
-            mostrarAlerta("Selecione uma OS para deletar!");
-            return;
-        }
-        
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Confirmar exclusão");
-        confirm.setHeaderText("Tem certeza?");
-        confirm.setContentText("OS: " + selecionado.getDescricao());
-        
-        if (confirm.showAndWait().get() == ButtonType.OK) {
-            try {
-                osDAO.deletar(selecionado.getId());
-                mostrarAlerta("OS deletada com sucesso!");
-                limparTudo();
-                carregarTodas();
-            } catch (Exception e) {
-                mostrarAlerta("Erro ao deletar: " + e.getMessage());
-                e.printStackTrace();
-            }
+    // Verificar permissão novamente por segurança
+    if (!UsuarioSessao.podeDeletarOS()) {
+        mostrarAlerta("Você não tem permissão para deletar OS!");
+        return;
+    }
+    
+    OrdemServicoEntity selecionado = tblOrdens.getSelectionModel().getSelectedItem();
+    
+    if (selecionado == null) {
+        mostrarAlerta("Selecione uma OS para deletar!");
+        return;
+    }
+    
+    Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+    confirm.setTitle("Confirmar exclusão");
+    confirm.setHeaderText("Tem certeza?");
+    confirm.setContentText("OS: " + selecionado.getDescricao());
+    
+    if (confirm.showAndWait().get() == ButtonType.OK) {
+        try {
+            osDAO.deletar(selecionado.getId());
+            mostrarAlerta("OS deletada com sucesso!");
+            limparTudo();
+            carregarTodas();
+        } catch (Exception e) {
+            mostrarAlerta("Erro ao deletar: " + e.getMessage());
+            e.printStackTrace();
         }
     }
+   }
     
     private void limparTudo() {
         txtId.clear();
