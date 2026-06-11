@@ -1,26 +1,57 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+/**
+ * ENTIDADE/CLIENTE - MODELO DE DADOS
+ * 
+ * Esta classe representa a tabela 'cliente' no banco de dados PostgreSQL.
+ * É um POJO (Plain Old Java Object) que contém apenas atributos, construtores,
+ * getters e setters.
+ * 
+ * Funcionalidade:
+ * - Armazenar os dados de um cliente
+ * - Transferir dados entre as camadas da aplicação (Controller ↔ DAO)
+ * - Ser usada como tipo na TableView do JavaFX
+ * 
+ * A tabela corresponde a: CREATE TABLE cliente (...)
+ * 
+ * @author joao
  */
 package com.eletronica.model;
 
-/**
- *
- * @author joao
- */
-
 public class ClienteEntity {
-    private int id;
-    private String nome;
-    private String email;
-    private String telefone;
-    private String cnpjCpf;
-    private String rg;
-    private String ie; 
     
-    // Construtores
+    // ==================== ATRIBUTOS ====================
+    // Correspondem diretamente às colunas da tabela 'cliente' no banco
+    
+    private int id;           // Identificador único (PK - SERIAL no PostgreSQL)
+    private String nome;      // Nome completo do cliente (obrigatório)
+    private String email;     // Email do cliente (obrigatório)
+    private String telefone;  // Telefone para contato (obrigatório)
+    private String cnpjCpf;   // CPF (pessoa física) ou CNPJ (pessoa jurídica) - obrigatório
+    private String rg;        // Registro Geral (RG) - obrigatório
+    private String ie;        // Inscrição Estadual (IE) - OPCIONAL (pode ser null)
+    
+    // ==================== CONSTRUTORES ====================
+    
+    /**
+     * CONSTRUTOR PADRÃO (sem parâmetros)
+     * 
+     * Necessário para o JavaFX e para o框架 PropertyValueFactory.
+     * Permite criar um objeto vazio e preencher via setters.
+     */
     public ClienteEntity() {}
     
+    /**
+     * CONSTRUTOR COM PARÂMETROS
+     * 
+     * Útil para criar um cliente já com todos os dados preenchidos.
+     * O ID NÃO é passado pois é gerado automaticamente pelo banco.
+     * 
+     * @param nome Nome completo do cliente
+     * @param email Email do cliente
+     * @param telefone Telefone para contato
+     * @param cnpjCpf CPF ou CNPJ
+     * @param rg Registro Geral (RG)
+     * @param ie Inscrição Estadual (opcional)
+     */
     public ClienteEntity(String nome, String email, String telefone, 
                          String cnpjCpf, String rg, String ie) {
         this.nome = nome;
@@ -29,27 +60,85 @@ public class ClienteEntity {
         this.cnpjCpf = cnpjCpf;
         this.rg = rg;
         this.ie = ie;
+        // id não é definido aqui - será gerado pelo banco
     }
     
-    // Getters e Setters
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    // ==================== GETTERS E SETTERS ====================
+    // Permitem acesso controlado aos atributos privados
     
-    public String getNome() { return nome; }
-    public void setNome(String nome) { this.nome = nome; }
+    /**
+     * GETTER DO ID
+     * @return Identificador único do cliente
+     */
+    public int getId() { 
+        return id; 
+    }
     
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    /**
+     * SETTER DO ID
+     * Geralmente chamado pelo DAO após inserir no banco, para
+     * atribuir o ID gerado automaticamente (SERIAL) ao objeto.
+     * 
+     * @param id ID gerado pelo banco de dados
+     */
+    public void setId(int id) { 
+        this.id = id; 
+    }
     
-    public String getTelefone() { return telefone; }
-    public void setTelefone(String telefone) { this.telefone = telefone; }
+    public String getNome() { 
+        return nome; 
+    }
     
-    public String getCnpjCpf() { return cnpjCpf; }
-    public void setCnpjCpf(String cnpjCpf) { this.cnpjCpf = cnpjCpf; }
+    public void setNome(String nome) { 
+        this.nome = nome; 
+    }
     
-    public String getRg() { return rg; }
-    public void setRg(String rg) { this.rg = rg; }
+    public String getEmail() { 
+        return email; 
+    }
     
-    public String getIe() { return ie; }
-    public void setIe(String ie) { this.ie = ie; }
+    public void setEmail(String email) { 
+        this.email = email; 
+    }
+    
+    public String getTelefone() { 
+        return telefone; 
+    }
+    
+    public void setTelefone(String telefone) { 
+        this.telefone = telefone; 
+    }
+    
+    public String getCnpjCpf() { 
+        return cnpjCpf; 
+    }
+    
+    public void setCnpjCpf(String cnpjCpf) { 
+        this.cnpjCpf = cnpjCpf; 
+    }
+    
+    public String getRg() { 
+        return rg; 
+    }
+    
+    public void setRg(String rg) { 
+        this.rg = rg; 
+    }
+    
+    /**
+     * GETTER DA INSCRIÇÃO ESTADUAL
+     * Pode retornar null (campo opcional no banco)
+     * @return IE ou null
+     */
+    public String getIe() { 
+        return ie; 
+    }
+    
+    /**
+     * SETTER DA INSCRIÇÃO ESTADUAL
+     * @param ie Pode ser null ou string vazia
+     */
+    public void setIe(String ie) { 
+        this.ie = ie; 
+    }
 }
