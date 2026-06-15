@@ -63,25 +63,26 @@ Usuarios e Grupos
   - Tecnico: Criar/editar OS, nao deleta
   - Recepcionista: Apenas consulta
   - Visitante: Sem acesso
+## Estrutura do Projeto
 
-Estrutura do Projeto
+
+``` 
 EletronicaAPP/
 ├── src/
-│ ├── main/
-│ │ ├── java/
-│ │ │ └── com/eletronica/
-│ │ │ ├── App.java # Ponto de entrada
-│ │ │ ├── controller/ # Controladores JavaFX
-│ │ │ ├── dao/ # Data Access Objects
-│ │ │ ├── model/ # Entidades/POJOs
-│ │ │ └── util/ # Utilitarios
-│ │ └── resources/
-│ │ └── com/eletronica/view/ # Arquivos FXML
-│ └── test/ # Testes unitarios
-├── pom.xml # Dependencias Maven
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/eletronica/
+│   │   │       ├── App.java
+│   │   │       ├── controller/
+│   │   │       ├── dao/
+│   │   │       ├── model/
+│   │   │       └── util/
+│   │   └── resources/
+│   │       └── com/eletronica/view/
+│   └── test/
+├── pom.xml
 └── README.md
-
-## Pre-requisitos
+```
 
 - JDK 17 ou superior
 - PostgreSQL 14 ou superior
