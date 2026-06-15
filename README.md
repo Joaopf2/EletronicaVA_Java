@@ -2,7 +2,7 @@
 
 Sistema desktop para gerenciamento de ordens de servico em assistencia tecnica de eletronicos.
 
-## Descricao
+ Descricao
 
 O Sistema de Gestao Eletronica e uma aplicacao desktop desenvolvida em JavaFX para gerenciar:
 - Cadastro de clientes
@@ -12,7 +12,7 @@ O Sistema de Gestao Eletronica e uma aplicacao desktop desenvolvida em JavaFX pa
 - Ordens de servico (OS)
 - Controle de permissoes por grupo
 
-## Tecnologias Utilizadas
+ Tecnologias Utilizadas
 
 | Tecnologia | Versao | Descricao |
 |------------|--------|-----------|
@@ -22,9 +22,9 @@ O Sistema de Gestao Eletronica e uma aplicacao desktop desenvolvida em JavaFX pa
 | Maven | 3.8+ | Gerenciador de dependencias |
 | Scene Builder | - | Ferramenta para design das telas |
 
-## Estrutura do Banco de Dados
+Estrutura do Banco de Dados
 
-### Tabelas principais:
+Tabelas principais:
 - `cliente` - Dados dos clientes
 - `produtos` - Equipamentos eletronicos
 - `servico` - Tipos de servicos disponiveis
@@ -32,31 +32,31 @@ O Sistema de Gestao Eletronica e uma aplicacao desktop desenvolvida em JavaFX pa
 - `usuarios` - Usuarios do sistema
 - `grupos_usuarios` - Perfis e permissoes
 
-## Funcionalidades
+ Funcionalidades
 
-### Clientes
+Clientes
 - Cadastro completo (nome, email, telefone, CPF/CNPJ, RG, IE)
 - Busca por nome
 - Edicao e exclusao
 
-### Produtos
+Produtos
 - Cadastro de equipamentos (nome, tipo, modelo, marca, categoria, defeito)
 - Busca por nome
 
-### Ordens de Servico
+Ordens de Servico
 - Criar nova OS vinculando cliente e produto
 - Status: EM ESPERA, EM ANDAMENTO, PRONTO
 - Buscar por descricao
 - Editar e deletar (com permissoes)
 
-### Usuarios e Grupos
+Usuarios e Grupos
 - Cadastro de usuarios com vinculo a grupos
 - Grupos com permissoes granulares:
   - `manterUsuario` - Gerenciar usuarios
   - `manterServico` - Gerenciar servicos
   - `permissao` - Acesso basico ao sistema
 
-### Controle de Acesso
+ Controle de Acesso
 - Login com email e senha
 - Permissoes diferentes por grupo:
   - Administrador: Acesso total
@@ -64,7 +64,7 @@ O Sistema de Gestao Eletronica e uma aplicacao desktop desenvolvida em JavaFX pa
   - Recepcionista: Apenas consulta
   - Visitante: Sem acesso
 
-## Estrutura do Projeto
+Estrutura do Projeto
 EletronicaAPP/
 ├── src/
 │ ├── main/
@@ -88,9 +88,9 @@ EletronicaAPP/
 - Maven 3.8 ou superior
 - JavaFX (gerenciado pelo Maven)
 
-## Instalacao e Execucao
+ Instalacao e Execucao
 
-### 1. Clone o repositorio
+ 1. Clone o repositorio
 
 ```bash
 git clone https://github.com/seu-usuario/eletronica-app.git
