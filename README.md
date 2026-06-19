@@ -2,7 +2,18 @@
 
 Sistema desktop para gerenciamento de ordens de servico em assistencia tecnica de eletronicos.
 
- Descricao
+Caso de Uso:
+
+<img width="898" height="447" alt="image" src="https://github.com/user-attachments/assets/0b139e82-8323-4848-84cd-7a5ff13b1085" />
+
+
+
+Diagrama de Classes:
+
+<img width="828" height="715" alt="image" src="https://github.com/user-attachments/assets/7f3bda8a-21e4-4b61-96a3-91ce0c7e79bc" />
+
+
+Descrição:
 
 O Sistema de Gestao Eletronica e uma aplicacao desktop desenvolvida em JavaFX para gerenciar:
 - Cadastro de clientes
