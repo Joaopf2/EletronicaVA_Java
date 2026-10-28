@@ -84,6 +84,7 @@ public class GrupoUsuarioController {
         btnLimpar.setOnAction(e -> limpar());   // Limpar formulário
         btnDeletar.setOnAction(e -> deletar()); // Deletar grupo
         btnBuscar.setOnAction(e -> buscar());   // Buscar grupos
+        if (txtBusca != null) txtBusca.setOnAction(e -> buscar());
         
         // CONFIGURAÇÃO DO LISTENER DA TABELA
         // Quando o usuário clica em um grupo na tabela, carrega seus dados nos campos
@@ -119,24 +120,24 @@ public class GrupoUsuarioController {
     }
     
     /**
-     * SALVA UM NOVO GRUPO DE USUÁRIO NO BANCO DE DADOS
+     * SALVA OU ATUALIZA UM GRUPO DE USUÁRIO NO BANCO DE DADOS
      * 
      * Este método:
      * 1. Valida se a descrição e código foram preenchidos
      * 2. Coleta os dados dos campos do formulário
      * 3. Cria um objeto GrupoUsuarioEntity com os dados
-     * 4. Chama o DAO para inserir no banco
+     * 4. Chama o DAO para inserir (novo) ou atualizar (selecionado na tabela)
      * 5. Limpa o formulário e atualiza a tabela
      */
     private void salvar() {
         // VALIDAÇÃO: Descrição é obrigatória
-        if (txtDescricao.getText().isEmpty()) {
+        if (txtDescricao.getText().trim().isEmpty()) {
             txtResultado.setText("Descrição é obrigatória!");
             return;
         }
         
         // VALIDAÇÃO: Código do grupo é obrigatório
-        if (txtGrupo.getText().isEmpty()) {
+        if (txtGrupo.getText().trim().isEmpty()) {
             txtResultado.setText("Código do grupo é obrigatório!");
             return;
         }
@@ -144,15 +145,23 @@ public class GrupoUsuarioController {
         try {
             // CRIAÇÃO DO OBJETO GRUPO
             GrupoUsuarioEntity grupo = new GrupoUsuarioEntity();
-            grupo.setDescricao(txtDescricao.getText());
-            grupo.setGrupo(Integer.parseInt(txtGrupo.getText()));  // Converte texto para número
+            grupo.setDescricao(txtDescricao.getText().trim());
+            grupo.setGrupo(Integer.parseInt(txtGrupo.getText().trim()));  // Converte texto para número
             grupo.setPermissao(chkPermissao.isSelected());         // Pega estado do CheckBox
             grupo.setManterUsuario(chkManterUsuario.isSelected()); // Pega estado do CheckBox
             grupo.setManterServico(chkManterServico.isSelected()); // Pega estado do CheckBox
             
-            // INSERÇÃO NO BANCO DE DADOS
-            grupoDAO.inserir(grupo);
-            txtResultado.setText("Grupo salvo com sucesso! ID: " + grupo.getId());
+            GrupoUsuarioEntity selecionado = tblGrupos.getSelectionModel().getSelectedItem();
+
+            // INSERÇÃO OU ATUALIZAÇÃO NO BANCO DE DADOS
+            if (selecionado != null && selecionado.getId() > 0) {
+                grupo.setId(selecionado.getId());
+                grupoDAO.atualizar(grupo);
+                txtResultado.setText("Grupo atualizado com sucesso! ID: " + grupo.getId());
+            } else {
+                grupoDAO.inserir(grupo);
+                txtResultado.setText("Grupo salvo com sucesso! ID: " + grupo.getId());
+            }
             
             // LIMPEZA E ATUALIZAÇÃO
             limpar();           // Limpa o formulário
@@ -218,7 +227,7 @@ public class GrupoUsuarioController {
         confirm.setContentText("Tem certeza?");
         
         // Só deleta se o usuário confirmar
-        if (confirm.showAndWait().get() == ButtonType.OK) {
+        if (confirm.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
             try {
                 grupoDAO.deletar(selecionado.getId());  // Deleta pelo ID
                 txtResultado.setText("Grupo deletado com sucesso!");

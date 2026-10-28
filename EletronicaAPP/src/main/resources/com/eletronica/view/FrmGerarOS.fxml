@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
+
+<AnchorPane id="AnchorPane" prefHeight="650.0" prefWidth="850.0" styleClass="dashboard-root" stylesheets="@style.css"
+            xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.eletronica.controller.GerarOSController">
+   <children>
+      <VBox spacing="16.0" styleClass="main-container"
+            AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+            AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <!-- Cabeçalho -->
+            <HBox alignment="CENTER_LEFT" spacing="14.0">
+               <children>
+                  <VBox styleClass="icon-box-blue">
+                     <children>
+                        <SVGPath content="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="white" scaleX="1.2" scaleY="1.2" />
+                     </children>
+                  </VBox>
+                  <VBox>
+                     <children>
+                        <Label styleClass="page-title" text="Gerar Ordem de Serviço (UC05)" />
+                        <Label styleClass="page-subtitle" text="Abertura de novo atendimento técnico, triagem e orçamento inicial" />
+                     </children>
+                  </VBox>
+                  <Region HBox.hgrow="ALWAYS" />
+                  <!-- Card informativo de Atendente e Data -->
+                  <VBox alignment="CENTER_RIGHT" spacing="2.0">
+                     <children>
+                        <HBox alignment="CENTER_RIGHT" spacing="6.0">
+                           <children>
+                              <Label styleClass="card-stat-label-muted" text="Data de Entrada:" />
+                              <Label fx:id="lblDataAtual" styleClass="header-info-value" text="--/--/----" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_RIGHT" spacing="6.0">
+                           <children>
+                              <Label styleClass="card-stat-label-muted" text="Atendente:" />
+                              <Label fx:id="lblAtendente" styleClass="card-stat-badge" text="-" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+
+            <!-- Card Central do Formulário -->
+            <VBox spacing="16.0" styleClass="card-pane" VBox.vgrow="ALWAYS">
+               <children>
+                  <HBox alignment="CENTER_LEFT">
+                     <children>
+                        <Label styleClass="section-title" text="Dados da Nova Ordem de Serviço" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <HBox alignment="CENTER_LEFT" spacing="8.0">
+                           <children>
+                              <Label style="-fx-font-size: 11px; -fx-text-fill: #94a3b8;" text="Status Inicial:" />
+                              <Label fx:id="lblStatusPadrao" styleClass="badge-espera" text="EM ESPERA" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
+
+                  <Separator />
+
+                  <GridPane hgap="14.0" vgap="14.0">
+                     <columnConstraints>
+                        <ColumnConstraints halignment="RIGHT" hgrow="NEVER" minWidth="120.0" prefWidth="130.0" />
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="220.0" prefWidth="380.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="100.0" prefWidth="120.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="38.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="38.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="38.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="120.0" prefHeight="140.0" vgrow="ALWAYS" />
+                     </rowConstraints>
+                     <children>
+                        <!-- Cliente -->
+                        <Label styleClass="form-label" text="Cliente:*" />
+                        <ComboBox fx:id="cbCliente" maxWidth="1.7976931348623157E308" promptText="Selecione o cliente..." GridPane.columnIndex="1" />
+                        <Button fx:id="btnNovoCliente" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="btn-secondary" text="+ Novo Cliente" GridPane.columnIndex="2" />
+
+                        <!-- Equipamento / Produto -->
+                        <Label styleClass="form-label" text="Equipamento:*" GridPane.rowIndex="1" />
+                        <ComboBox fx:id="cbProduto" maxWidth="1.7976931348623157E308" promptText="Selecione o equipamento a ser consertado..." GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Button fx:id="btnNovoProduto" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="btn-secondary" text="+ Novo Aparelho" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+
+                        <!-- Orçamento Inicial -->
+                        <Label styleClass="form-label" text="Orçamento (R$):" GridPane.rowIndex="2" />
+                        <TextField fx:id="txtOrcamento" promptText="Ex: 150.00 (opcional na entrada)" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                        <!-- Diagnóstico e Defeito -->
+                        <Label styleClass="form-label" text="Defeito Relatado:*" GridPane.rowIndex="3" />
+                        <TextArea fx:id="txtDescricao" promptText="Descreva o problema apresentado, estado do aparelho ou diagnóstico inicial..." wrapText="true" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3" />
+                     </children>
+                  </GridPane>
+
+                  <Separator />
+
+                  <!-- Ações -->
+                  <HBox alignment="CENTER_LEFT" spacing="14.0">
+                     <children>
+                        <Button fx:id="btnSalvar" mnemonicParsing="false" prefHeight="42.0" prefWidth="200.0" styleClass="btn-primary" text="Gerar Ordem de Serviço" />
+                        <Button fx:id="btnLimpar" mnemonicParsing="false" prefHeight="42.0" prefWidth="120.0" styleClass="btn-warning" text="Limpar" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button fx:id="btnCancelar" mnemonicParsing="false" prefHeight="42.0" prefWidth="120.0" styleClass="btn-secondary" text="Cancelar" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+
+            <!-- Status Log -->
+            <TextArea fx:id="txtResultado" editable="false" maxHeight="50.0" minHeight="40.0" prefHeight="45.0" promptText="Status da operação..." styleClass="status-log" />
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

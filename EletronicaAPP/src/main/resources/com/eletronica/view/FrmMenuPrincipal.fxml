@@ -3,43 +3,386 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane id="AnchorPane" prefHeight="518.0" prefWidth="886.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.eletronica.controller.MenuPrincipalController">
-    <children>
-        <VBox alignment="CENTER" layoutX="-4.0" layoutY="-1.0" prefHeight="518.0" prefWidth="894.0" spacing="20.0">
-            <padding>
-                <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
-            </padding>
-            <children>
-                <Label alignment="CENTER" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="Sistema de Gestão Eletrônica" />
-            <Separator prefWidth="200.0" />
-                <HBox alignment="CENTER" prefHeight="90.0" prefWidth="834.0" spacing="15.0">
-                    <children>
-                        <Button fx:id="btnUsuarios" mnemonicParsing="false" prefHeight="26.0" prefWidth="184.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #3498db; -fx-text-fill: white;" text="Cadastro de Usuario" />
-                        <Button fx:id="btnClientes" mnemonicParsing="false" prefHeight="26.0" prefWidth="184.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #3498db; -fx-text-fill: white;" text="Clientes" />
-                        <Button fx:id="btnProdutos" mnemonicParsing="false" prefHeight="26.0" prefWidth="184.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #3498db; -fx-text-fill: white;" text="Produtos" />
-                    </children>
-                </HBox>
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+<AnchorPane id="AnchorPane" prefHeight="800.0" prefWidth="1260.0" styleClass="dashboard-root" stylesheets="@style.css"
+            xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.eletronica.controller.MenuPrincipalController">
+   <children>
+      <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <!-- ==================== 1. SIDEBAR ESQUERDA ==================== -->
+            <VBox maxWidth="260.0" minWidth="240.0" prefWidth="250.0" spacing="18.0" styleClass="sidebar-pane">
                <children>
-                      <Button fx:id="btnGrupoUsuario" mnemonicParsing="false" prefHeight="26.0" prefWidth="184.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #3498db; -fx-text-fill: white;" text="Grupo Usuario" />
-                      <Button fx:id="btnOrdens" mnemonicParsing="false" prefHeight="26.0" prefWidth="184.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #3498db; -fx-text-fill: white;" text="Criar Ordem de Serviços" />
-                      <Button fx:id="btnServicos" mnemonicParsing="false" prefHeight="26.0" prefWidth="184.0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #3498db; -fx-text-fill: white;" text="Consultar Serviços" />
+                  <!-- Logotipo / Marca -->
+                  <HBox alignment="CENTER_LEFT" spacing="12.0">
+                     <children>
+                        <VBox styleClass="icon-box-blue">
+                           <children>
+                              <SVGPath content="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.82 9H3.5a.5.5 0 0 1-.48-.641l2.5-8z" styleClass="circle-svg-white" scaleX="1.2" scaleY="1.2" />
+                           </children>
+                        </VBox>
+                        <VBox>
+                           <children>
+                              <Label styleClass="brand-title" text="Eletrônica VA" />
+                              <Label styleClass="brand-subtitle" text="ASSISTÊNCIA &amp; ESTOQUE" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+
+                  <!-- Card de Status / Capacidade (Painel da Loja) -->
+                  <VBox spacing="8.0" styleClass="card-stat, sidebar-store-card">
+                     <children>
+                        <HBox alignment="CENTER_LEFT">
+                           <children>
+                              <Label styleClass="card-stat-label-muted" text="Painel da Loja" />
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Label fx:id="lblTotalBadge" styleClass="card-stat-badge" text="Ativa" />
+                           </children>
+                        </HBox>
+                        <Label fx:id="lblCapacidadeOS" styleClass="card-stat-value" text="-- Ordens" />
+                        <ProgressBar fx:id="progressoCapacidade" maxWidth="1.7976931348623157E308" prefHeight="6.0" progress="0.75" style="-fx-accent: #2563eb;" />
+                     </children>
+                  </VBox>
+
+                  <!-- Menu de Navegação Vertical -->
+                  <VBox spacing="6.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Label style="-fx-font-size: 10.5px; -fx-text-fill: #64748b; -fx-font-weight: bold; -fx-padding: 0 0 4px 6px;" text="MENU OPERACIONAL" />
+                        <Button fx:id="btnHome" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="nav-item-btn, nav-item-active" text="Início / Painel">
+                           <graphic>
+                              <SVGPath content="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5ZM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5 5 5Z" styleClass="nav-svg-icon" />
+                           </graphic>
+                        </Button>
+                        <Button fx:id="btnOrdens" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="nav-item-btn" text="Ordens de Serviço">
+                           <graphic>
+                              <SVGPath content="M10.5 1.5H8.207A2 2 0 0 0 6.5 0h-1A2 2 0 0 0 3.793 1.5H1.5A1.5 1.5 0 0 0 0 3v10.5A1.5 1.5 0 0 0 1.5 15h9a1.5 1.5 0 0 0 1.5-1.5V3a1.5 1.5 0 0 0-1.5-1.5Zm-5-1a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1V2h-3V.5ZM1 3a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 .5.5v10.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V3Zm2 3.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5Zm0 3a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5Zm0 3a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5Z" styleClass="nav-svg-icon" />
+                           </graphic>
+                        </Button>
+                        <Button fx:id="btnClientes" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="nav-item-btn" text="Clientes">
+                           <graphic>
+                              <SVGPath content="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7Zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216ZM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" styleClass="nav-svg-icon" />
+                           </graphic>
+                        </Button>
+                        <Button fx:id="btnProdutos" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="nav-item-btn" text="Equipamentos">
+                           <graphic>
+                              <SVGPath content="M0 4s0-2 2-2h12s2 0 2 2v6s0 2-2 2h-4c0 .667.083 1.167.25 1.5H11a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1h.75c.167-.333.25-.833.25-1.5H2s-2 0-2-2V4Zm1.333-.5A.5.5 0 0 0 1 4v6c0 .276.224.5.5.5h13a.5.5 0 0 0 .5-.5V4a.5.5 0 0 0-.5-.5h-13.167Z" styleClass="nav-svg-icon" />
+                           </graphic>
+                        </Button>
+                        <Button fx:id="btnServicos" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="nav-item-btn" text="Catálogo de Serviços">
+                           <graphic>
+                              <SVGPath content="M.102 2.223A3.004 3.004 0 0 0 3.78 5.897l6.341 6.252A3.061 3.061 0 0 0 13 16a3 3 0 1 0-.85-5.877L5.897 3.78A3.004 3.004 0 0 0 2.223.102L3.5 1.5 1.5 3.5.102 2.223ZM13 14a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z" styleClass="nav-svg-icon" />
+                           </graphic>
+                        </Button>
+                        
+                        <Label style="-fx-font-size: 10.5px; -fx-text-fill: #64748b; -fx-font-weight: bold; -fx-padding: 10px 0 4px 6px;" text="ADMINISTRAÇÃO" />
+                        <Button fx:id="btnUsuarios" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="nav-item-btn" text="Gerenciar Usuários">
+                           <graphic>
+                              <SVGPath content="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" styleClass="nav-svg-icon" />
+                           </graphic>
+                        </Button>
+                        <Button fx:id="btnGrupoUsuario" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="nav-item-btn" text="Grupos e Acessos">
+                           <graphic>
+                              <SVGPath content="M5.338 1.59a61.44 61.44 0 0 0-2.837.856.481.481 0 0 0-.328.39c-.55 3.998-.088 7.758 1.458 10.354 1.018 1.704 2.378 2.58 3.869 2.81 1.49-.23 2.85-1.106 3.869-2.81 1.546-2.596 2.008-6.356 1.458-10.354a.482.482 0 0 0-.328-.39 61.441 61.441 0 0 0-2.837-.855C9.43 1.442 8.73 1.25 8 1.25c-.73 0-1.43.192-2.662.34ZM8 0c.937 0 1.83.21 2.9.362 1.13.16 2.13.435 2.85.67A1.5 1.5 0 0 1 15 2.45c.61 4.417.07 8.68-1.63 11.537-1.2 2.01-2.86 3.14-4.87 3.49a1.5 1.5 0 0 1-1 0c-2.01-.35-3.67-1.48-4.87-3.49C.93 11.13.39 6.867 1 2.45A1.5 1.5 0 0 1 2.25 1.032c.72-.235 1.72-.51 2.85-.67C6.17.21 7.063 0 8 0Z M8 5a1.5 1.5 0 0 0-1.5 1.5v1h-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-.5v-1A1.5 1.5 0 0 0 8 5Zm-.5 1.5a.5.5 0 0 1 1 0v1h-1v-1Z" styleClass="nav-svg-icon" />
+                           </graphic>
+                        </Button>
+                     </children>
+                  </VBox>
+
+                  <!-- Botão de Ação Rápida em Destaque (igual "+ Upload File" na foto) -->
+                  <Button fx:id="btnNovaOSRapida" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="44.0" styleClass="btn-action-hero" text="Nova Ordem de Serviço">
+                     <graphic>
+                        <SVGPath content="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z" styleClass="circle-svg-white" />
+                     </graphic>
+                  </Button>
+
+                  <!-- Sessão do Usuário e Sair -->
+                  <VBox spacing="8.0">
+                     <children>
+                        <Separator />
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                           <children>
+                              <VBox HBox.hgrow="ALWAYS" minWidth="0.0">
+                                 <children>
+                                    <Label fx:id="lblUsuarioLogado" styleClass="user-name-label" text="Usuário: -" />
+                                    <Label fx:id="lblPerfil" styleClass="user-perfil-label" text="Perfil: -" />
+                                 </children>
+                              </VBox>
+                              <Button fx:id="btnSair" minWidth="88.0" prefWidth="88.0" mnemonicParsing="false" onAction="#sair" styleClass="btn-danger, btn-logout" text="Sair">
+                                 <graphic>
+                                    <SVGPath content="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z" styleClass="circle-svg-white" />
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
                </children>
-            </HBox>
-            <Separator prefWidth="200.0" />
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+            </VBox>
+
+            <!-- ==================== 2. PAINEL CENTRAL ==================== -->
+            <VBox spacing="20.0" styleClass="content-pane" HBox.hgrow="ALWAYS">
                <children>
-                  <Label fx:id="lblUsuarioLogado" style="-fx-font-weight: bold;" />
-                  <Label fx:id="lblPerfil" style="-fx-text-fill: #3498db;" />
+                  <!-- Cabeçalho Central (Título, Saudação, Pesquisa) -->
+                  <HBox alignment="CENTER_LEFT" spacing="16.0">
+                     <children>
+                        <VBox>
+                           <children>
+                              <Label styleClass="page-title" text="Painel Operacional" />
+                              <Label fx:id="lblSaudacao" styleClass="page-subtitle" text="Olá, bem-vindo de volta ao sistema!" />
+                           </children>
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS" />
+                        <!-- Barra de Pesquisa Estilo Pill com Lupa -->
+                        <HBox alignment="CENTER_LEFT" prefWidth="380.0">
+                           <children>
+                              <TextField fx:id="txtBuscaDashboard" maxWidth="1.7976931348623157E308" promptText="Buscar por cliente, equipamento ou defeito..." styleClass="search-pill-field" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
+                        <!-- Botão Alternar Tema Claro / Escuro -->
+                        <Button fx:id="btnAlternarTema" mnemonicParsing="false" styleClass="btn-theme-toggle" text="Tema Claro">
+                           <graphic>
+                              <SVGPath fx:id="svgIconeTema" content="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z" styleClass="theme-svg-icon" />
+                           </graphic>
+                        </Button>
+                     </children>
+                  </HBox>
+
+                  <!-- Grid de Cards de Status / Folders (detalhes em Amarelo, Azul, Vermelho e Ciano) -->
+                  <GridPane hgap="14.0" vgap="14.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="ALWAYS" minWidth="150.0" percentWidth="25.0" />
+                      <ColumnConstraints hgrow="ALWAYS" minWidth="150.0" percentWidth="25.0" />
+                      <ColumnConstraints hgrow="ALWAYS" minWidth="150.0" percentWidth="25.0" />
+                      <ColumnConstraints hgrow="ALWAYS" minWidth="150.0" percentWidth="25.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="86.0" prefHeight="94.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <!-- Card 1: Em Espera (Amarelo) -->
+                        <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="card-stat" GridPane.columnIndex="0">
+                           <children>
+                              <VBox styleClass="icon-box-yellow">
+                                 <children>
+                                    <SVGPath content="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z" styleClass="circle-svg-white" scaleX="1.2" scaleY="1.2" />
+                                 </children>
+                              </VBox>
+                              <VBox alignment="CENTER_LEFT">
+                                 <children>
+                                    <Label styleClass="kpi-title-yellow" text="Em Espera" />
+                                    <Label fx:id="lblQtdEspera" styleClass="kpi-value" text="0" />
+                                    <Label styleClass="kpi-subtitle" text="Triagem inicial" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+
+                        <!-- Card 2: Em Andamento (Azul) -->
+                        <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="card-stat" GridPane.columnIndex="1">
+                           <children>
+                              <VBox styleClass="icon-box-blue">
+                                 <children>
+                                    <SVGPath content="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319z" styleClass="circle-svg-white" scaleX="1.15" scaleY="1.15" />
+                                 </children>
+                              </VBox>
+                              <VBox alignment="CENTER_LEFT">
+                                 <children>
+                                    <Label styleClass="kpi-title-blue" text="Em Andamento" />
+                                    <Label fx:id="lblQtdAndamento" styleClass="kpi-value" text="0" />
+                                    <Label styleClass="kpi-subtitle" text="Reparo na bancada" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+
+                        <!-- Card 3: Pronto (Vermelho / Coral) -->
+                        <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="card-stat" GridPane.columnIndex="2">
+                           <children>
+                              <VBox styleClass="icon-box-red">
+                                 <children>
+                                    <SVGPath content="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" styleClass="circle-svg-white" scaleX="1.2" scaleY="1.2" />
+                                 </children>
+                              </VBox>
+                              <VBox alignment="CENTER_LEFT">
+                                 <children>
+                                    <Label styleClass="kpi-title-red" text="Prontos" />
+                                    <Label fx:id="lblQtdPronto" styleClass="kpi-value" text="0" />
+                                    <Label styleClass="kpi-subtitle" text="Aguardando entrega" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+
+                        <!-- Card 4: Clientes e Equipamentos (Ciano) -->
+                        <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="card-stat" GridPane.columnIndex="3">
+                           <children>
+                              <VBox styleClass="icon-box-cyan">
+                                 <children>
+                                    <SVGPath content="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z M4 6.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm0 3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm0 3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5z" styleClass="circle-svg-white" scaleX="1.15" scaleY="1.15" />
+                                 </children>
+                              </VBox>
+                              <VBox alignment="CENTER_LEFT">
+                                 <children>
+                                    <Label styleClass="kpi-title-cyan" text="Total Registrado" />
+                                    <Label fx:id="lblQtdTotal" styleClass="kpi-value" text="0" />
+                                    <Label styleClass="kpi-subtitle" text="Histórico total" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                     </children>
+                  </GridPane>
+
+                  <!-- Seção Tabela: Ordens de Serviço Recentes (como "Recent Files" na foto) -->
+                  <VBox spacing="10.0" styleClass="card-pane" VBox.vgrow="ALWAYS">
+                     <children>
+                        <HBox alignment="CENTER_LEFT">
+                           <children>
+                              <Label styleClass="section-title" text="Atendimentos Recentes" />
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Label style="-fx-font-size: 12px; -fx-text-fill: #94a3b8;" text="Selecione para ver o resumo à direita ➔" />
+                           </children>
+                        </HBox>
+
+                        <TableView fx:id="tblOrdensDashboard" minHeight="240.0" VBox.vgrow="ALWAYS">
+                          <columns>
+                            <TableColumn fx:id="colId" maxWidth="60.0" minWidth="45.0" prefWidth="50.0" text="ID" />
+                            <TableColumn fx:id="colCliente" prefWidth="180.0" text="Cliente" />
+                            <TableColumn fx:id="colProduto" prefWidth="170.0" text="Equipamento" />
+                            <TableColumn fx:id="colDescricao" prefWidth="220.0" text="Diagnóstico / Serviço" />
+                            <TableColumn fx:id="colStatus" prefWidth="120.0" text="Status" />
+                            <TableColumn fx:id="colOrcamento" prefWidth="110.0" text="Orçamento" />
+                            <TableColumn fx:id="colData" prefWidth="95.0" text="Data" />
+                          </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                        </TableView>
+                     </children>
+                  </VBox>
                </children>
-            </HBox>
-            <Button mnemonicParsing="false" onAction="#sair" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-weight: bold;" text="Sair" />
-            </children>
-        </VBox>
-    </children>
+            </VBox>
+
+            <!-- ==================== 3. PAINEL DIREITO (FILE PREVIEW DA FOTO) ==================== -->
+            <VBox maxWidth="320.0" minWidth="300.0" prefWidth="310.0" spacing="18.0" styleClass="preview-pane">
+               <children>
+                  <!-- Título da Seção estilo Mac/File Preview -->
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <Label styleClass="preview-header-title" text="Resumo do Reparo" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <!-- Detalhes estilo pontos decorativos (Verde, Amarelo, Vermelho) -->
+                        <HBox spacing="5.0">
+                           <children>
+                              <Region prefHeight="9.0" prefWidth="9.0" style="-fx-background-color: #22c55e; -fx-background-radius: 5px;" />
+                              <Region prefHeight="9.0" prefWidth="9.0" style="-fx-background-color: #f59e0b; -fx-background-radius: 5px;" />
+                              <Region prefHeight="9.0" prefWidth="9.0" style="-fx-background-color: #ef4444; -fx-background-radius: 5px;" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
+
+                  <!-- Card Destaque Vermelho estilo o ícone do PDF na foto! -->
+                  <VBox alignment="CENTER" spacing="10.0" styleClass="card-pane" style="-fx-padding: 22px;">
+                     <children>
+                        <VBox alignment="CENTER" styleClass="preview-hero-card">
+                           <children>
+                              <Label styleClass="preview-hero-text" text="OS" />
+                              <Label style="-fx-font-size: 10px; -fx-text-fill: white; -fx-font-weight: bold;" text="ELETRÔNICA" />
+                           </children>
+                        </VBox>
+                        <Label fx:id="lblPreviewTitulo" alignment="CENTER" styleClass="preview-title" text="Nenhuma OS selecionada" textAlignment="CENTER" wrapText="true" />
+                        <Label fx:id="lblPreviewSubtitulo" alignment="CENTER" styleClass="preview-subtitle" text="Selecione uma ordem na tabela" textAlignment="CENTER" />
+                     </children>
+                  </VBox>
+
+                  <!-- Detalhes do Registro Selecionado -->
+                  <VBox spacing="10.0" styleClass="card-pane" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Label style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #2563eb;" text="STATUS &amp; ORÇAMENTO" />
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                           <children>
+                              <Label fx:id="lblPreviewStatus" styleClass="badge-espera" text="EM ESPERA" />
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Label fx:id="lblPreviewOrcamento" style="-fx-font-size: 15px; -fx-font-weight: 800; -fx-text-fill: #d97706;" text="R$ 0,00" />
+                           </children>
+                        </HBox>
+
+                        <Separator />
+
+                        <Label styleClass="preview-field-header" text="CLIENTE" />
+                        <Label fx:id="lblPreviewCliente" styleClass="preview-field-value" text="-" />
+
+                        <Label styleClass="preview-field-header" text="EQUIPAMENTO" />
+                        <Label fx:id="lblPreviewProduto" styleClass="preview-field-subvalue" text="-" />
+
+                        <Label styleClass="preview-field-header" text="DIAGNÓSTICO / DEFEITO" />
+                        <TextArea fx:id="txtPreviewDescricao" editable="false" prefHeight="70.0" styleClass="text-area-preview" wrapText="true" VBox.vgrow="ALWAYS" />
+                     </children>
+                  </VBox>
+
+                  <!-- Botões de Ação estilo a foto: 3 botões em formato pill/circular com azul, amarelo e vermelho! -->
+                  <VBox alignment="CENTER" spacing="6.0">
+                     <children>
+                        <HBox alignment="CENTER" spacing="16.0">
+                           <children>
+                              <!-- Botão 1: Consulta / Detalhes da OS (Azul) -->
+                              <VBox alignment="CENTER" spacing="4.0">
+                                 <children>
+                                    <Button fx:id="btnPreviewAbrirOS" mnemonicParsing="false" styleClass="btn-circle-action-blue">
+                                       <graphic>
+                                          <SVGPath content="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" styleClass="circle-svg-white" scaleX="1.25" scaleY="1.25" />
+                                       </graphic>
+                                    </Button>
+                                    <Label style="-fx-font-size: 11px; -fx-text-fill: #94a3b8; -fx-font-weight: bold;" text="Detalhes" />
+                                 </children>
+                              </VBox>
+
+                              <!-- Botão 2: Mudar Status / Editar (Amarelo) -->
+                              <VBox alignment="CENTER" spacing="4.0">
+                                 <children>
+                                    <Button fx:id="btnPreviewStatus" mnemonicParsing="false" styleClass="btn-circle-action-yellow">
+                                       <graphic>
+                                          <SVGPath content="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" styleClass="circle-svg-dark" scaleX="1.2" scaleY="1.2" />
+                                       </graphic>
+                                    </Button>
+                                    <Label style="-fx-font-size: 11px; -fx-text-fill: #94a3b8; -fx-font-weight: bold;" text="Status" />
+                                 </children>
+                              </VBox>
+
+                              <!-- Botão 3: Deletar OS (Vermelho) -->
+                              <VBox alignment="CENTER" spacing="4.0">
+                                 <children>
+                                    <Button fx:id="btnPreviewDeletarOS" mnemonicParsing="false" styleClass="btn-circle-action-red">
+                                       <graphic>
+                                          <SVGPath content="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" styleClass="circle-svg-white" scaleX="1.2" scaleY="1.2" />
+                                       </graphic>
+                                    </Button>
+                                    <Label style="-fx-font-size: 11px; -fx-text-fill: #94a3b8; -fx-font-weight: bold;" text="Excluir" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </children>
 </AnchorPane>

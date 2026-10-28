@@ -22,6 +22,7 @@ package com.eletronica.controller;
 // Imports da aplicação
 import com.eletronica.dao.ServicoDAO;      // Classe de acesso ao banco de dados
 import com.eletronica.model.ServicoEntity; // Modelo/entidade Serviço
+import com.eletronica.util.UsuarioSessao;  // Sessão e permissões do usuário
 
 // Imports do JavaFX
 import javafx.collections.FXCollections;   // Utilitários para listas observáveis
@@ -36,14 +37,16 @@ public class ServicoController {
     // Estes atributos são injetados automaticamente pelo JavaFX
     // Os nomes devem ser IDÊNTICOS aos fx:id definidos no Scene Builder
     
-    // Componentes de busca
+    // Componentes de busca e ações
     @FXML private TextField txtBusca;      // Campo para digitar o texto da busca
     @FXML private Button btnPesquisar;     // Botão para executar a busca
     @FXML private Button btnLimpar;        // Botão para limpar a busca
+    @FXML private Button btnSalvar;        // Botão para salvar/atualizar serviço (requer manterServico)
+    @FXML private Button btnDeletar;       // Botão para deletar serviço (requer manterServico)
     
-    // Campos de detalhes do serviço (readonly - apenas para exibição)
+    // Campos de detalhes do serviço (readonly - apenas para exibição, ou editável se tiver permissão)
     @FXML private TextField txtId;          // Exibe o ID do serviço (readonly)
-    @FXML private TextField txtDescricao;   // Exibe a descrição do serviço (readonly)
+    @FXML private TextField txtDescricao;   // Exibe a descrição do serviço
     
     // Área de texto para exibir resultados/mensagens
     @FXML private TextArea txtResultado;
@@ -90,7 +93,10 @@ public class ServicoController {
         
         // ==================== EVENTOS DOS BOTÕES ====================
         if (btnPesquisar != null) btnPesquisar.setOnAction(e -> pesquisar());
+        if (txtBusca != null) txtBusca.setOnAction(e -> pesquisar());
         if (btnLimpar != null) btnLimpar.setOnAction(e -> limparTudo());
+        if (btnSalvar != null) btnSalvar.setOnAction(e -> salvar());
+        if (btnDeletar != null) btnDeletar.setOnAction(e -> deletar());
         
         // ==================== LISTENER DA TABELA ====================
         // Quando o usuário clica em um serviço na tabela, carrega seus detalhes nos campos
@@ -101,6 +107,20 @@ public class ServicoController {
                         exibirDetalhes(novo);
                     }
                 });
+        }
+
+        // ==================== CONTROLE DE PERMISSÃO (manterServico) ====================
+        boolean podeManter = UsuarioSessao.podeManterServico();
+        if (txtDescricao != null) txtDescricao.setEditable(podeManter);
+        if (btnSalvar != null) {
+            btnSalvar.setDisable(!podeManter);
+            btnSalvar.setVisible(podeManter);
+            btnSalvar.setManaged(podeManter);
+        }
+        if (btnDeletar != null) {
+            btnDeletar.setDisable(!podeManter);
+            btnDeletar.setVisible(podeManter);
+            btnDeletar.setManaged(podeManter);
         }
     }
     
@@ -164,6 +184,72 @@ public class ServicoController {
         } catch (Exception e) {
             mostrarAlerta("Erro na busca: " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * SALVA OU ATUALIZA UM SERVIÇO (REQUER PERMISSÃO manterServico)
+     */
+    private void salvar() {
+        if (!UsuarioSessao.podeManterServico()) {
+            mostrarAlerta("Você não tem permissão para gerenciar serviços!");
+            return;
+        }
+        String descricao = txtDescricao != null ? txtDescricao.getText().trim() : "";
+        if (descricao.isEmpty()) {
+            mostrarAlerta("A descrição do serviço é obrigatória!");
+            return;
+        }
+
+        try {
+            ServicoEntity servico = new ServicoEntity(descricao);
+            if (txtId != null && !txtId.getText().trim().isEmpty()) {
+                servico.setId(Integer.parseInt(txtId.getText().trim()));
+                servicoDAO.atualizar(servico);
+                txtResultado.setText("Serviço atualizado com sucesso! ID: " + servico.getId());
+            } else {
+                servicoDAO.inserir(servico);
+                txtResultado.setText("Serviço cadastrado com sucesso! ID: " + servico.getId());
+            }
+            limparDetalhes();
+            carregarTodos();
+        } catch (Exception e) {
+            mostrarAlerta("Erro ao salvar serviço: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * DELETA O SERVIÇO SELECIONADO (REQUER PERMISSÃO manterServico)
+     */
+    private void deletar() {
+        if (!UsuarioSessao.podeManterServico()) {
+            mostrarAlerta("Você não tem permissão para deletar serviços!");
+            return;
+        }
+        ServicoEntity selecionado = tblServicos != null
+                ? tblServicos.getSelectionModel().getSelectedItem()
+                : null;
+        if (selecionado == null) {
+            mostrarAlerta("Selecione um serviço na tabela para deletar!");
+            return;
+        }
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Confirmar exclusão");
+        confirm.setHeaderText("Deletar serviço: " + selecionado.getDescricao());
+        confirm.setContentText("Tem certeza que deseja excluir este serviço?");
+
+        if (confirm.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
+            try {
+                servicoDAO.deletar(selecionado.getId());
+                txtResultado.setText("Serviço deletado com sucesso!");
+                limparDetalhes();
+                carregarTodos();
+            } catch (Exception e) {
+                mostrarAlerta("Erro ao deletar serviço: " + e.getMessage());
+                e.printStackTrace();
+            }
         }
     }
     

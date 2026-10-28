@@ -11,13 +11,14 @@ package com.eletronica.util;
 
 public class TesteConexao {
     public static void main(String[] args) {
-        try {
-            System.out.println("Conectando...");
-            Database.getConnection();
-            System.out.println("Conectado com sucesso!");
-            Database.closeConnection();
+        System.out.println("Conectando...");
+        try (java.sql.Connection conn = Database.getConnection()) {
+            System.out.println("Conectado com sucesso! PostgreSQL "
+                    + conn.getMetaData().getDatabaseProductVersion());
         } catch (Exception e) {
             System.out.println("ERRO: " + e.getMessage());
+        } finally {
+            Database.closeConnection();  // Encerra o pool
         }
     }
 }

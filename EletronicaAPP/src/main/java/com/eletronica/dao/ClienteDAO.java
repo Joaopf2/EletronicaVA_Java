@@ -56,7 +56,7 @@ public class ClienteDAO {
         
         // try-with-resources: garante que o PreparedStatement será fechado automaticamente
         // Statement.RETURN_GENERATED_KEYS: solicita que o banco retorne o ID gerado
-        try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
             // ==================== PREENCHIMENTO DOS PARÂMETROS ====================
             // Os números correspondem à posição dos '?' na SQL (1 = primeiro '?')
@@ -108,7 +108,7 @@ public class ClienteDAO {
         String sql = "SELECT * FROM cliente ORDER BY nome";
         
         // try-with-resources: Statement e ResultSet são fechados automaticamente
-        try (Statement stmt = Database.getConnection().createStatement();
+        try (Connection conn = Database.getConnection(); Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             
             // ==================== PERCORRE O RESULTADO ====================
@@ -155,7 +155,7 @@ public class ClienteDAO {
         // SQL: ILIKE = case-insensitive (não diferencia maiúsculas de minúsculas)
         String sql = "SELECT * FROM cliente WHERE nome ILIKE ? ORDER BY nome";
         
-        try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             // O % no início e fim torna a busca "contém"
             // Ex: nome = "silva" → SQL fica "... WHERE nome ILIKE '%silva%'"
             stmt.setString(1, "%" + nome + "%");
@@ -192,7 +192,7 @@ public class ClienteDAO {
         // SQL de atualização: SET define os novos valores, WHERE identifica o registro
         String sql = "UPDATE cliente SET nome=?, email=?, telefone=?, cnpjcpf=?, rg=?, ie=? WHERE id=?";
         
-        try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             // Preenche os parâmetros (na ordem do SET)
             stmt.setString(1, cliente.getNome());
             stmt.setString(2, cliente.getEmail());
@@ -224,9 +224,40 @@ public class ClienteDAO {
         // SQL de deleção
         String sql = "DELETE FROM cliente WHERE id=?";
         
-        try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);  // WHERE id = ?
             stmt.executeUpdate(); // Executa a deleção
         }
+    }
+
+    // ==================== MÉTODO BUSCAR POR ID (READ) ====================
+
+    /**
+     * BUSCA UM CLIENTE PELO SEU ID
+     * 
+     * @param id Identificador único do cliente
+     * @return ClienteEntity encontrado, ou null se não existir
+     * @throws SQLException Se ocorrer erro durante a operação no banco
+     */
+    public ClienteEntity buscarPorId(int id) throws SQLException {
+        String sql = "SELECT * FROM cliente WHERE id = ?";
+
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    ClienteEntity c = new ClienteEntity();
+                    c.setId(rs.getInt("id"));
+                    c.setNome(rs.getString("nome"));
+                    c.setEmail(rs.getString("email"));
+                    c.setTelefone(rs.getString("telefone"));
+                    c.setCnpjCpf(rs.getString("cnpjcpf"));
+                    c.setRg(rs.getString("rg"));
+                    c.setIe(rs.getString("ie"));
+                    return c;
+                }
+            }
+        }
+        return null;
     }
 }

@@ -13,77 +13,126 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
 
-<AnchorPane id="AnchorPane" prefHeight="662.0" prefWidth="838.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.eletronica.controller.OrdemServicoController">
+<AnchorPane id="AnchorPane" prefHeight="760.0" prefWidth="1100.0" styleClass="dashboard-root" stylesheets="@style.css"
+            xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.eletronica.controller.OrdemServicoController">
    <children>
-      <VBox prefHeight="662.0" prefWidth="838.0" spacing="10.0">
-         <padding>
-            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-         </padding>
+      <VBox spacing="16.0" styleClass="main-container"
+            AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+            AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Label alignment="CENTER" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="Ordem de Serviço" />
-            <HBox prefHeight="36.0" prefWidth="748.0">
+            <!-- Cabeçalho -->
+            <HBox alignment="CENTER_LEFT" spacing="14.0">
                <children>
-                  <Label text="Pesquisar:" />
-                  <TextField fx:id="txtBusca" prefHeight="23.0" prefWidth="294.0" promptText="Digite a descrição..." />
-                  <Button fx:id="btnPesquisar" mnemonicParsing="false" style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold;" text="Buscar" />
-                  <Button fx:id="btnNovo" mnemonicParsing="false" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;" text="Novo" />
+                  <VBox styleClass="icon-box-blue">
+                     <children>
+                        <SVGPath content="M10.5 1.5H8.207A2 2 0 0 0 6.5 0h-1A2 2 0 0 0 3.793 1.5H1.5A1.5 1.5 0 0 0 0 3v10.5A1.5 1.5 0 0 0 1.5 15h9a1.5 1.5 0 0 0 1.5-1.5V3a1.5 1.5 0 0 0-1.5-1.5Zm-5-1a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1V2h-3V.5ZM1 3a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 .5.5v10.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V3Zm2 3.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5Zm0 3a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5Zm0 3a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5Z" fill="white" scaleX="1.15" scaleY="1.15" />
+                     </children>
+                  </VBox>
+                  <VBox>
+                     <children>
+                        <Label styleClass="page-title" text="Gerenciamento de Ordens de Serviço (OS)" />
+                        <Label styleClass="page-subtitle" text="Acompanhamento de diagnósticos técnicos, clientes, equipamentos e orçamentos" />
+                     </children>
+                  </VBox>
+                  <Region HBox.hgrow="ALWAYS" />
+                  <Button fx:id="btnNovo" mnemonicParsing="false" prefHeight="38.0" prefWidth="130.0" styleClass="btn-primary" text="+ Nova OS" />
                </children>
             </HBox>
-            <TableView fx:id="tblOrdens" prefHeight="155.0" prefWidth="748.0">
-              <columns>
-                <TableColumn fx:id="colId" prefWidth="50.0" text="ID" />
-                <TableColumn fx:id="colDescricao" prefWidth="250.0" text="Descrição" />
-                  <TableColumn fx:id="colCliente" prefWidth="150.0" text="Cliente" />
-                  <TableColumn fx:id="colStatus" prefWidth="100.0" text="Status" />
-                  <TableColumn fx:id="colOrcamento" prefWidth="100.0" text="Orçamento" />
-                  <TableColumn fx:id="colData" prefWidth="100.0" text="Data" />
-              </columns>
-            </TableView>
-            <Separator prefWidth="200.0" />
-            <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Dados da Ordem de Serviço" />
-            <GridPane hgap="10.0" prefHeight="154.0" prefWidth="798.0" vgap="10.0">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="148.0" minWidth="10.0" prefWidth="68.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="266.0" minWidth="10.0" prefWidth="248.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="172.0" minWidth="5.0" prefWidth="48.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="353.0" minWidth="10.0" prefWidth="336.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints maxHeight="20.0" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
-                  <RowConstraints maxHeight="20.0" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
-                  <RowConstraints maxHeight="20.0" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
-              </rowConstraints>
+
+            <!-- Barra de Pesquisa e Tabela Principal -->
+            <VBox spacing="12.0" styleClass="card-pane" VBox.vgrow="ALWAYS">
                <children>
-                  <Label text="ID:" />
-                  <TextField fx:id="txtId" editable="false" prefHeight="23.0" prefWidth="184.0" GridPane.columnIndex="1" />
-                  <Label prefHeight="15.0" prefWidth="45.0" text="Status:" GridPane.columnIndex="2" />
-                  <ComboBox fx:id="cbStatus" prefWidth="150.0" GridPane.columnIndex="3" />
-                  <Label text="Cliente:" GridPane.rowIndex="1" />
-                  <ComboBox fx:id="cbCliente" prefWidth="250.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1" />
-                  <Label text="Produto:" GridPane.rowIndex="2" />
-                  <ComboBox fx:id="cbProduto" prefWidth="250.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="2" />
-                  <Label text="Orçamento:" GridPane.rowIndex="3" />
-                  <TextField fx:id="txtOrcamento" prefHeight="39.0" prefWidth="265.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <Label text="Descrição:" GridPane.rowIndex="4" />
-                  <TextArea fx:id="txtDescricao" prefHeight="80.0" prefWidth="400.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="4" />
+                  <HBox alignment="CENTER_LEFT" spacing="12.0">
+                     <children>
+                        <TextField fx:id="txtBusca" promptText="🔍 Digite a descrição do serviço, cliente ou defeito..." styleClass="search-pill-field" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="btnPesquisar" mnemonicParsing="false" prefHeight="36.0" prefWidth="110.0" styleClass="btn-secondary" text="Pesquisar" />
+                     </children>
+                  </HBox>
+
+                  <TableView fx:id="tblOrdens" minHeight="200.0" VBox.vgrow="ALWAYS">
+                    <columns>
+                      <TableColumn fx:id="colId" maxWidth="75.0" minWidth="50.0" prefWidth="60.0" text="ID" />
+                      <TableColumn fx:id="colCliente" prefWidth="180.0" text="Cliente" />
+                      <TableColumn fx:id="colProduto" prefWidth="180.0" text="Equipamento" />
+                      <TableColumn fx:id="colDescricao" prefWidth="250.0" text="Descrição do Reparo" />
+                      <TableColumn fx:id="colStatus" prefWidth="130.0" text="Status" />
+                      <TableColumn fx:id="colOrcamento" prefWidth="120.0" text="Orçamento" />
+                      <TableColumn fx:id="colData" prefWidth="100.0" text="Data" />
+                    </columns>
+                     <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                     </columnResizePolicy>
+                  </TableView>
                </children>
-            </GridPane>
-            <HBox alignment="CENTER" prefHeight="34.0" prefWidth="748.0" spacing="10.0">
+            </VBox>
+
+            <!-- Formulário de Edição e Ações -->
+            <VBox spacing="14.0" styleClass="card-pane">
                <children>
-                  <Button fx:id="btnSalvar" mnemonicParsing="false" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;" text="Salvar" />
-                  <Button fx:id="btnLimpar" mnemonicParsing="false" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-weight: bold;" text="Limpar" />
-                  <Button fx:id="btnDeletar" mnemonicParsing="false" style="-fx-background-color: #FF9800; -fx-text-fill: white; -fx-font-weight: bold;" text="Deletar" />
+                  <HBox alignment="CENTER_LEFT">
+                     <children>
+                        <Label styleClass="section-title" text="Dados da Ordem de Serviço Selecionada" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Label style="-fx-font-size: 11.5px; -fx-text-fill: #94a3b8;" text="Campos com * são obrigatórios" />
+                     </children>
+                  </HBox>
+
+                  <GridPane hgap="14.0" vgap="12.0">
+                    <columnConstraints>
+                      <ColumnConstraints halignment="RIGHT" hgrow="NEVER" minWidth="90.0" prefWidth="105.0" />
+                      <ColumnConstraints hgrow="ALWAYS" minWidth="200.0" prefWidth="320.0" />
+                      <ColumnConstraints halignment="RIGHT" hgrow="NEVER" minWidth="100.0" prefWidth="110.0" />
+                      <ColumnConstraints hgrow="ALWAYS" minWidth="200.0" prefWidth="320.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="36.0" prefHeight="38.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="36.0" prefHeight="38.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="36.0" prefHeight="38.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="65.0" prefHeight="70.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label styleClass="form-label" text="Nº OS (ID):" />
+                        <TextField fx:id="txtId" editable="false" promptText="Automático (Nova OS)" GridPane.columnIndex="1" />
+
+                        <Label styleClass="form-label" text="Status:*" GridPane.columnIndex="2" />
+                        <ComboBox fx:id="cbStatus" maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" />
+
+                        <Label styleClass="form-label" text="Cliente:*" GridPane.rowIndex="1" />
+                        <ComboBox fx:id="cbCliente" maxWidth="1.7976931348623157E308" promptText="Selecione o cliente..." GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                        <Label styleClass="form-label" text="Equipamento:*" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                        <ComboBox fx:id="cbProduto" maxWidth="1.7976931348623157E308" promptText="Selecione o produto/equipamento..." GridPane.columnIndex="3" GridPane.rowIndex="1" />
+
+                        <Label styleClass="form-label" text="Orçamento:" GridPane.rowIndex="2" />
+                        <TextField fx:id="txtOrcamento" promptText="Ex: 250.00" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                        <Label styleClass="form-label" text="Diagnóstico:*" GridPane.rowIndex="3" />
+                        <TextArea fx:id="txtDescricao" prefHeight="66.0" promptText="Descreva o defeito relatado, diagnóstico técnico e reparo efetuado..." wrapText="true" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="3" />
+                     </children>
+                  </GridPane>
+
+                  <Separator />
+
+                  <!-- Botões de Ação com Cores do Design (Azul, Amarelo, Vermelho) -->
+                  <HBox alignment="CENTER_LEFT" spacing="14.0">
+                     <children>
+                        <Button fx:id="btnSalvar" mnemonicParsing="false" prefHeight="38.0" prefWidth="160.0" styleClass="btn-primary" text="Salvar / Atualizar" />
+                        <Button fx:id="btnLimpar" mnemonicParsing="false" prefHeight="38.0" prefWidth="120.0" styleClass="btn-warning" text="Limpar Campos" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button fx:id="btnDeletar" mnemonicParsing="false" prefHeight="38.0" prefWidth="120.0" styleClass="btn-danger" text="Excluir OS" />
+                     </children>
+                  </HBox>
                </children>
-            </HBox>
-            <TextArea fx:id="txtResultado" editable="false" minHeight="60.0" prefHeight="111.0" promptText="Resultado das operações..." />
+            </VBox>
+
+            <!-- Log / Status de Operação -->
+            <TextArea fx:id="txtResultado" editable="false" maxHeight="60.0" minHeight="45.0" prefHeight="50.0" promptText="Status da operação..." styleClass="status-log" />
          </children>
       </VBox>
    </children>

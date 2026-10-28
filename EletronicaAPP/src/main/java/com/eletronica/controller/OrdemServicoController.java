@@ -61,6 +61,7 @@ public class OrdemServicoController {
     @FXML private TableColumn<OrdemServicoEntity, Integer> colId;         // Coluna ID
     @FXML private TableColumn<OrdemServicoEntity, String> colDescricao;   // Coluna Descrição
     @FXML private TableColumn<OrdemServicoEntity, String> colCliente;     // Coluna Cliente
+    @FXML private TableColumn<OrdemServicoEntity, String> colProduto;     // Coluna Produto
     @FXML private TableColumn<OrdemServicoEntity, String> colStatus;      // Coluna Status
     @FXML private TableColumn<OrdemServicoEntity, String> colOrcamento;   // Coluna Orçamento
     @FXML private TableColumn<OrdemServicoEntity, String> colData;        // Coluna Data
@@ -101,6 +102,7 @@ public class OrdemServicoController {
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colDescricao.setCellValueFactory(new PropertyValueFactory<>("descricao"));
         colCliente.setCellValueFactory(new PropertyValueFactory<>("nomeCliente"));
+        if (colProduto != null) colProduto.setCellValueFactory(new PropertyValueFactory<>("nomeProduto"));
         colStatus.setCellValueFactory(new PropertyValueFactory<>("statusString"));
         colOrcamento.setCellValueFactory(new PropertyValueFactory<>("orcamento"));
         
@@ -115,6 +117,7 @@ public class OrdemServicoController {
         // ==================== CONFIGURAÇÃO DO COMBOBOX DE STATUS ====================
         // Adiciona os possíveis status da OS (conforme enum TipoStatus)
         cbStatus.getItems().addAll("EM ESPERA", "EM ANDAMENTO", "PRONTO");
+        cbStatus.setValue("EM ESPERA");
         
         // ==================== CARREGAMENTO DE DADOS ====================
         carregarClientes();   // Carrega lista de clientes no ComboBox
@@ -123,6 +126,7 @@ public class OrdemServicoController {
         
         // ==================== EVENTOS DOS BOTÕES ====================
         btnPesquisar.setOnAction(e -> pesquisar());
+        if (txtBusca != null) txtBusca.setOnAction(e -> pesquisar());
         btnNovo.setOnAction(e -> novo());
         btnSalvar.setOnAction(e -> salvar());
         btnLimpar.setOnAction(e -> limparTudo());
@@ -148,11 +152,14 @@ public class OrdemServicoController {
         // Verifica se o usuário pode deletar OS (apenas Administrador - grupo 1)
         if (!UsuarioSessao.podeDeletarOS()) {
             btnDeletar.setVisible(false); // Esconde o botão deletar
+            btnDeletar.setManaged(false);
         }
         
         // Exibe informações do usuário logado na área de resultado
-        txtResultado.appendText("\nUsuário: " + UsuarioSessao.getUsuarioLogado().getNome() + 
-                                " | Perfil: " + UsuarioSessao.getGrupoLogado().getDescricao());
+        if (UsuarioSessao.isLogado()) {
+            txtResultado.appendText("\nUsuário: " + UsuarioSessao.getUsuarioLogado().getNome() + 
+                                    " | Perfil: " + UsuarioSessao.getGrupoLogado().getDescricao());
+        }
     }
     
     // ==================== MÉTODOS DE CARREGAMENTO ====================
@@ -289,7 +296,7 @@ public class OrdemServicoController {
      */
     private void salvar() {
         // ==================== VALIDAÇÕES ====================
-        if (txtDescricao.getText().isEmpty()) {
+        if (txtDescricao.getText().trim().isEmpty()) {
             mostrarAlerta("Descrição é obrigatória!");
             return;
         }
@@ -304,8 +311,8 @@ public class OrdemServicoController {
         
         // ==================== CRIAÇÃO DO OBJETO OS ====================
         OrdemServicoEntity os = new OrdemServicoEntity();
-        os.setDescricao(txtDescricao.getText());
-        os.setOrcamento(txtOrcamento.getText().isEmpty() ? "0" : txtOrcamento.getText());
+        os.setDescricao(txtDescricao.getText().trim());
+        os.setOrcamento(txtOrcamento.getText().trim().isEmpty() ? "0" : txtOrcamento.getText().trim());
         os.setIdCliente(cbCliente.getValue().getId());
         os.setIdProduto(cbProduto.getValue().getId());
         
@@ -332,13 +339,21 @@ public class OrdemServicoController {
         
         // ==================== INSERÇÃO OU ATUALIZAÇÃO ====================
         try {
-            if (txtId.getText().isEmpty()) {
+            if (txtId.getText().trim().isEmpty()) {
                 // CRIAÇÃO: ID vazio significa nova OS
+                if (!UsuarioSessao.podeCriarOS()) {
+                    mostrarAlerta("Você não tem permissão para criar OS!");
+                    return;
+                }
                 osDAO.inserir(os);
                 mostrarAlerta("OS salva com sucesso! ID: " + os.getId());
             } else {
                 // EDIÇÃO: ID preenchido significa atualização
-                os.setId(Integer.parseInt(txtId.getText()));
+                if (!UsuarioSessao.podeEditarOS()) {
+                    mostrarAlerta("Você não tem permissão para editar Ordens de Serviço!");
+                    return;
+                }
+                os.setId(Integer.parseInt(txtId.getText().trim()));
                 osDAO.atualizar(os);
                 mostrarAlerta("OS atualizada com sucesso!");
             }
@@ -415,7 +430,7 @@ public class OrdemServicoController {
         confirm.setHeaderText("Tem certeza?");
         confirm.setContentText("OS: " + selecionado.getDescricao());
         
-        if (confirm.showAndWait().get() == ButtonType.OK) {
+        if (confirm.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
             try {
                 osDAO.deletar(selecionado.getId());
                 mostrarAlerta("OS deletada com sucesso!");
@@ -438,11 +453,10 @@ public class OrdemServicoController {
         txtDescricao.clear();
         txtOrcamento.clear();
         txtBusca.clear();
-        cbStatus.setValue(null);
+        cbStatus.setValue("EM ESPERA");
         cbCliente.setValue(null);
         cbProduto.setValue(null);
         tblOrdens.getSelectionModel().clearSelection();
-        txtResultado.clear();
     }
     
     /**

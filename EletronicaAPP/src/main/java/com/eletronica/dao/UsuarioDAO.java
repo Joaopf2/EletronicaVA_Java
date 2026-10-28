@@ -13,7 +13,12 @@
  * - Buscar usuário com grupo completo (READ - para login)
  * - Atualizar dados do usuário (UPDATE)
  * - Deletar usuário (DELETE)
- * - Validar login (autenticação)
+ * - Validar login (autenticação com BCrypt)
+ * - Migrar senhas legadas em texto puro para BCrypt
+ * 
+ * Segurança:
+ * - As senhas são gravadas SOMENTE como hash BCrypt (ver SenhaUtil)
+ * - As consultas de listagem não carregam o hash da senha
  * 
  * Relacionamentos:
  * - Um usuário pertence a UM grupo (FK: id_grupo_usuario)
@@ -27,6 +32,7 @@ package com.eletronica.dao;
 import com.eletronica.model.GrupoUsuarioEntity; // Modelo de Grupo de Usuário
 import com.eletronica.model.UsuarioEntity;      // Modelo/entidade Usuário
 import com.eletronica.util.Database;            // Classe de conexão com o banco
+import com.eletronica.util.SenhaUtil;           // Hash/verificação de senhas (BCrypt)
 
 // Imports Java padrão
 import java.sql.*;          // Classes para operações SQL
@@ -39,10 +45,6 @@ public class UsuarioDAO {
     
     /**
      * INSERE UM NOVO USUÁRIO NO BANCO DE DADOS
-     * 
-     * Utiliza PreparedStatement para evitar SQL Injection.
-     * O ID do usuário é gerado automaticamente pelo banco (SERIAL).
-     * 
      * @param usuario Objeto UsuarioEntity com os dados a serem inseridos
      * @throws SQLException Se ocorrer erro durante a operação no banco
      */
@@ -51,18 +53,17 @@ public class UsuarioDAO {
         String sql = "INSERT INTO usuarios (nome, email, senha, id_grupo_usuario) VALUES (?, ?, ?, ?)";
 
         // Statement.RETURN_GENERATED_KEYS: solicita que o banco retorne o ID gerado
-        try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
-            // ==================== PREENCHIMENTO DOS PARÂMETROS ====================
             stmt.setString(1, usuario.getNome());        // Nome do usuário
             stmt.setString(2, usuario.getEmail());       // Email (usado para login)
-            stmt.setString(3, usuario.getSenha());       // Senha (texto puro - para desenvolvimento)
+            stmt.setString(3, SenhaUtil.hash(usuario.getSenha())); // Senha (hash BCrypt)
             stmt.setInt(4, usuario.getIdGrupoUsuario()); // ID do grupo (FK)
 
-            // ==================== EXECUÇÃO DO SQL ====================
+            // EXECUÇÃO DO SQL
             stmt.executeUpdate();
 
-            // ==================== RECUPERAÇÃO DO ID GERADO ====================
+            //RECUPERAÇÃO DO ID GERADO
             ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next()) {
                 usuario.setId(rs.getInt(1));  // Atribui o ID gerado ao objeto usuário
@@ -70,8 +71,7 @@ public class UsuarioDAO {
         }
     }
 
-    // ==================== MÉTODO LISTAR TODOS (READ) ====================
-    
+    // MÉTODO LISTAR TODOS (READ)
     /**
      * LISTA TODOS OS USUÁRIOS DO BANCO DE DADOS
      * 
@@ -91,7 +91,7 @@ public class UsuarioDAO {
                 + "INNER JOIN grupos_usuarios g ON u.id_grupo_usuario = g.id "
                 + "ORDER BY u.nome";  // Ordenado por nome (A-Z)
 
-        try (Statement stmt = Database.getConnection().createStatement(); 
+        try (Connection conn = Database.getConnection(); Statement stmt = conn.createStatement(); 
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
@@ -99,7 +99,6 @@ public class UsuarioDAO {
                 u.setId(rs.getInt("id"));
                 u.setNome(rs.getString("nome"));
                 u.setEmail(rs.getString("email"));
-                u.setSenha(rs.getString("senha"));
                 u.setIdGrupoUsuario(rs.getInt("id_grupo_usuario"));
                 u.setNomeGrupo(rs.getString("nome_grupo")); // Vem do JOIN
                 usuarios.add(u);
@@ -108,7 +107,7 @@ public class UsuarioDAO {
         return usuarios;
     }
 
-    // ==================== MÉTODO BUSCAR POR NOME (READ COM FILTRO) ====================
+    //  MÉTODO BUSCAR POR NOME (READ COM FILTRO)
     
     /**
      * BUSCA USUÁRIOS CUJO NOME CONTENHA O TEXTO FORNECIDO
@@ -126,7 +125,7 @@ public class UsuarioDAO {
                 + "INNER JOIN grupos_usuarios g ON u.id_grupo_usuario = g.id "
                 + "WHERE u.nome ILIKE ? ORDER BY u.nome";
 
-        try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, "%" + nome + "%");  // % = qualquer caractere antes/depois
             ResultSet rs = stmt.executeQuery();
 
@@ -135,7 +134,6 @@ public class UsuarioDAO {
                 u.setId(rs.getInt("id"));
                 u.setNome(rs.getString("nome"));
                 u.setEmail(rs.getString("email"));
-                u.setSenha(rs.getString("senha"));
                 u.setIdGrupoUsuario(rs.getInt("id_grupo_usuario"));
                 u.setNomeGrupo(rs.getString("nome_grupo"));
                 usuarios.add(u);
@@ -158,7 +156,7 @@ public class UsuarioDAO {
                 + "INNER JOIN grupos_usuarios g ON u.id_grupo_usuario = g.id "
                 + "WHERE u.id = ?";
 
-        try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
 
@@ -167,7 +165,6 @@ public class UsuarioDAO {
                 u.setId(rs.getInt("id"));
                 u.setNome(rs.getString("nome"));
                 u.setEmail(rs.getString("email"));
-                u.setSenha(rs.getString("senha"));
                 u.setIdGrupoUsuario(rs.getInt("id_grupo_usuario"));
                 u.setNomeGrupo(rs.getString("nome_grupo"));
                 return u;
@@ -192,7 +189,7 @@ public class UsuarioDAO {
                 + "INNER JOIN grupos_usuarios g ON u.id_grupo_usuario = g.id "
                 + "WHERE u.email = ?";  // Busca exata (não LIKE)
 
-        try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
 
@@ -201,7 +198,6 @@ public class UsuarioDAO {
                 u.setId(rs.getInt("id"));
                 u.setNome(rs.getString("nome"));
                 u.setEmail(rs.getString("email"));
-                u.setSenha(rs.getString("senha"));
                 u.setIdGrupoUsuario(rs.getInt("id_grupo_usuario"));
                 u.setNomeGrupo(rs.getString("nome_grupo"));
                 return u;
@@ -215,18 +211,27 @@ public class UsuarioDAO {
     /**
      * ATUALIZA OS DADOS DE UM USUÁRIO EXISTENTE
      * 
+     * Se usuario.getSenha() estiver vazio/nulo, a senha atual é MANTIDA.
+     * Caso contrário, a nova senha (texto puro) é convertida em hash BCrypt.
+     * 
      * @param usuario Objeto UsuarioEntity com os dados atualizados
      * @throws SQLException Se ocorrer erro durante a operação no banco
      */
     public void atualizar(UsuarioEntity usuario) throws SQLException {
-        String sql = "UPDATE usuarios SET nome=?, email=?, senha=?, id_grupo_usuario=? WHERE id=?";
+        boolean alterarSenha = usuario.getSenha() != null && !usuario.getSenha().isEmpty();
+        String sql = alterarSenha
+                ? "UPDATE usuarios SET nome=?, email=?, id_grupo_usuario=?, senha=? WHERE id=?"
+                : "UPDATE usuarios SET nome=?, email=?, id_grupo_usuario=? WHERE id=?";
 
-        try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
-            stmt.setString(1, usuario.getNome());
-            stmt.setString(2, usuario.getEmail());
-            stmt.setString(3, usuario.getSenha());
-            stmt.setInt(4, usuario.getIdGrupoUsuario());
-            stmt.setInt(5, usuario.getId());  // WHERE id = ?
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            int i = 1;
+            stmt.setString(i++, usuario.getNome());
+            stmt.setString(i++, usuario.getEmail());
+            stmt.setInt(i++, usuario.getIdGrupoUsuario());
+            if (alterarSenha) {
+                stmt.setString(i++, SenhaUtil.hash(usuario.getSenha()));
+            }
+            stmt.setInt(i, usuario.getId());  // WHERE id = ?
             stmt.executeUpdate();
         }
     }
@@ -242,7 +247,7 @@ public class UsuarioDAO {
     public void deletar(int id) throws SQLException {
         String sql = "DELETE FROM usuarios WHERE id=?";
 
-        try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             stmt.executeUpdate();
         }
@@ -253,22 +258,102 @@ public class UsuarioDAO {
     /**
      * VALIDA AS CREDENCIAIS DE LOGIN DO USUÁRIO
      * 
-     * Verifica se existe um usuário com o email e senha fornecidos.
+     * Verifica se existe um usuário com o email fornecido e se a senha
+     * confere com o hash BCrypt armazenado.
      * 
      * @param email Email do usuário
-     * @param senha Senha do usuário
+     * @param senha Senha do usuário (texto puro digitado)
      * @return true se as credenciais são válidas, false caso contrário
      * @throws SQLException Se ocorrer erro durante a operação no banco
      */
     public boolean validarLogin(String email, String senha) throws SQLException {
-        String sql = "SELECT * FROM usuarios WHERE email = ? AND senha = ?";
+        return autenticar(email, senha) != null;
+    }
 
-        try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
-            stmt.setString(1, email);
-            stmt.setString(2, senha);
-            ResultSet rs = stmt.executeQuery();
-            return rs.next();  // Retorna true se encontrou algum registro
+    // ==================== MÉTODO AUTENTICAR (LOGIN SEGURO) ====================
+
+    /**
+     * AUTENTICA O USUÁRIO E RETORNA SEUS DADOS COM O GRUPO/PERMISSÕES
+     * 
+     * - Compara a senha digitada com o hash BCrypt armazenado
+     * - Se a senha armazenada ainda estiver em texto puro (legado) e conferir,
+     *   ela é convertida para BCrypt automaticamente
+     * - O hash NÃO é mantido no objeto retornado (não fica na sessão)
+     * 
+     * @param email Email do usuário
+     * @param senha Senha digitada (texto puro)
+     * @return UsuarioEntity com grupo preenchido, ou null se email/senha inválidos
+     * @throws SQLException Se ocorrer erro durante a operação no banco
+     */
+    public UsuarioEntity autenticar(String email, String senha) throws SQLException {
+        UsuarioEntity usuario = buscarPorEmailComGrupo(email);
+        if (usuario == null || !SenhaUtil.verificar(senha, usuario.getSenha())) {
+            return null;
         }
+        if (SenhaUtil.precisaRehash(usuario.getSenha())) {
+            atualizarHashSenha(usuario.getId(), SenhaUtil.hash(senha));
+        }
+        usuario.setSenha(null);  // Não manter o hash em memória
+        return usuario;
+    }
+
+    /**
+     * GRAVA DIRETAMENTE UM HASH DE SENHA JÁ CALCULADO
+     */
+    private void atualizarHashSenha(int id, String hash) throws SQLException {
+        String sql = "UPDATE usuarios SET senha=? WHERE id=?";
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, hash);
+            stmt.setInt(2, id);
+            stmt.executeUpdate();
+        }
+    }
+
+    // ==================== MIGRAÇÃO DE SENHAS LEGADAS ====================
+
+    /**
+     * CONVERTE PARA BCRYPT TODAS AS SENHAS AINDA ARMAZENADAS EM TEXTO PURO
+     * 
+     * Operação idempotente: senhas que já são hash BCrypt são ignoradas.
+     * Executada automaticamente na inicialização do sistema (App.start).
+     * 
+     * @return Quantidade de senhas convertidas
+     * @throws SQLException Se ocorrer erro durante a operação no banco
+     */
+    public int migrarSenhasTextoPuro() throws SQLException {
+        String select = "SELECT id, senha FROM usuarios";
+        String update = "UPDATE usuarios SET senha=? WHERE id=? AND senha=?";
+        int convertidas = 0;
+
+        try (Connection conn = Database.getConnection()) {
+            boolean autoCommitOriginal = conn.getAutoCommit();
+            conn.setAutoCommit(false);
+            try (Statement stmtSel = conn.createStatement();
+                 ResultSet rs = stmtSel.executeQuery(select);
+                 PreparedStatement stmtUpd = conn.prepareStatement(update)) {
+
+                while (rs.next()) {
+                    String atual = rs.getString("senha");
+                    if (SenhaUtil.precisaRehash(atual)) {
+                        stmtUpd.setString(1, SenhaUtil.hash(atual));
+                        stmtUpd.setInt(2, rs.getInt("id"));
+                        stmtUpd.setString(3, atual);  // evita sobrescrever alteração concorrente
+                        stmtUpd.addBatch();
+                        convertidas++;
+                    }
+                }
+                if (convertidas > 0) {
+                    stmtUpd.executeBatch();
+                }
+                conn.commit();
+            } catch (SQLException | RuntimeException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(autoCommitOriginal);
+            }
+        }
+        return convertidas;
     }
 
     // ==================== MÉTODO BUSCAR POR EMAIL COM GRUPO COMPLETO (LOGIN) ====================
@@ -294,7 +379,7 @@ public class UsuarioDAO {
                 + "INNER JOIN grupos_usuarios g ON u.id_grupo_usuario = g.id "
                 + "WHERE u.email = ?";
 
-        try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
 

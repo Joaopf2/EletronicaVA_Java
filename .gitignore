@@ -1,0 +1,8 @@
+# Credenciais locais (nunca versionar)
+application-local.properties
+**/application-local.properties
+
+# Artefatos de build do Maven
+target/
+**/target/
+

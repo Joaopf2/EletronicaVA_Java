@@ -51,7 +51,7 @@ public class GrupoUsuarioDAO {
         
         // try-with-resources: garante que o PreparedStatement será fechado automaticamente
         // Statement.RETURN_GENERATED_KEYS: solicita que o banco retorne o ID gerado
-        try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
             // ==================== PREENCHIMENTO DOS PARÂMETROS ====================
             // Os números correspondem à posição dos '?' na SQL
@@ -91,7 +91,7 @@ public class GrupoUsuarioDAO {
         String sql = "SELECT * FROM grupos_usuarios ORDER BY grupo";
         
         // try-with-resources: Statement e ResultSet são fechados automaticamente
-        try (Statement stmt = Database.getConnection().createStatement();
+        try (Connection conn = Database.getConnection(); Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             
             // ==================== PERCORRE O RESULTADO ====================
@@ -132,7 +132,7 @@ public class GrupoUsuarioDAO {
         // SQL: Seleciona grupo pelo ID
         String sql = "SELECT * FROM grupos_usuarios WHERE id = ?";
         
-        try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);  // WHERE id = ?
             ResultSet rs = stmt.executeQuery();
             
@@ -172,7 +172,7 @@ public class GrupoUsuarioDAO {
         // SQL: ILIKE = case-insensitive (não diferencia maiúsculas de minúsculas)
         String sql = "SELECT * FROM grupos_usuarios WHERE descricao ILIKE ? ORDER BY grupo";
         
-        try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             // O % no início e fim torna a busca "contém"
             // Ex: descricao = "tec" → SQL fica "... WHERE descricao ILIKE '%tec%'"
             stmt.setString(1, "%" + descricao + "%");
@@ -209,7 +209,7 @@ public class GrupoUsuarioDAO {
         String sql = "UPDATE grupos_usuarios SET descricao=?, grupo=?, permissao=?, " +
                      "manter_usuario=?, manter_servico=? WHERE id=?";
         
-        try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             // Preenche os parâmetros (na ordem do SET)
             stmt.setString(1, grupo.getDescricao());
             stmt.setInt(2, grupo.getGrupo());
@@ -240,7 +240,7 @@ public class GrupoUsuarioDAO {
         // SQL de deleção
         String sql = "DELETE FROM grupos_usuarios WHERE id=?";
         
-        try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);  // WHERE id = ?
             stmt.executeUpdate(); // Executa a deleção
         }

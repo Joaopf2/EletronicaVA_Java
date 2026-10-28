@@ -48,4 +48,25 @@ public class ProdutoEntity {
     
     public String getDefeito() { return defeito; }
     public void setDefeito(String defeito) { this.defeito = defeito; }
+
+    @Override
+    public String toString() {
+        if (marca != null && !marca.isBlank() && modelo != null && !modelo.isBlank()) {
+            return nome + " (" + marca + " " + modelo + ")";
+        }
+        return nome;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ProdutoEntity that = (ProdutoEntity) o;
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(id);
+    }
 }

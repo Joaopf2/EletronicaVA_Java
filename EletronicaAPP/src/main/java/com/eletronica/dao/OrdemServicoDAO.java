@@ -50,7 +50,7 @@ public class OrdemServicoDAO {
         String sql = "INSERT INTO ordens_servico (orcamento, data, descricao, status, id_cliente, id_produto) " +
                      "VALUES (?, ?, ?, ?, ?, ?)";
         
-        try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
             // ==================== PREENCHIMENTO DOS PARÂMETROS ====================
             stmt.setString(1, os.getOrcamento());                    // Orçamento (String)
@@ -95,7 +95,7 @@ public class OrdemServicoDAO {
                      "INNER JOIN produtos p ON os.id_produto = p.id " +
                      "ORDER BY os.data DESC";  // Mais recentes primeiro
         
-        try (Statement stmt = Database.getConnection().createStatement();
+        try (Connection conn = Database.getConnection(); Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             
             while (rs.next()) {
@@ -127,7 +127,7 @@ public class OrdemServicoDAO {
                      "WHERE os.descricao ILIKE ? " +  // Busca case-insensitive
                      "ORDER BY os.data DESC";
         
-        try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, "%" + descricao + "%");  // % = qualquer caractere antes/depois
             ResultSet rs = stmt.executeQuery();
             
@@ -156,7 +156,7 @@ public class OrdemServicoDAO {
                      "INNER JOIN produtos p ON os.id_produto = p.id " +
                      "WHERE os.id = ?";
         
-        try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
             
@@ -182,7 +182,7 @@ public class OrdemServicoDAO {
         // SQL de atualização (data NÃO é atualizada)
         String sql = "UPDATE ordens_servico SET orcamento=?, descricao=?, status=?, id_cliente=?, id_produto=? WHERE id=?";
         
-        try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, os.getOrcamento());
             stmt.setString(2, os.getDescricao());
             stmt.setString(3, os.getStatus().name());  // Converte Enum para String
@@ -209,7 +209,7 @@ public class OrdemServicoDAO {
     public void atualizarStatus(int id, OrdemServicoEntity.TipoStatus status) throws SQLException {
         String sql = "UPDATE ordens_servico SET status = ? WHERE id = ?";
         
-        try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, status.name());  // Converte Enum para String
             stmt.setInt(2, id);
             stmt.executeUpdate();
@@ -227,7 +227,7 @@ public class OrdemServicoDAO {
     public void deletar(int id) throws SQLException {
         String sql = "DELETE FROM ordens_servico WHERE id = ?";
         
-        try (PreparedStatement stmt = Database.getConnection().prepareStatement(sql)) {
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             stmt.executeUpdate();
         }

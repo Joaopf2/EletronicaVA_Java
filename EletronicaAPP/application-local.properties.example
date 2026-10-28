@@ -1,0 +1,7 @@
+# Copie este arquivo para "application-local.properties" (mesma pasta)
+# e preencha com as credenciais do seu PostgreSQL.
+# O arquivo application-local.properties é ignorado pelo Git.
+
+db.url=jdbc:postgresql://localhost:5432/eletronicadb
+db.user=postgres
+db.password=SUA_SENHA_AQUI

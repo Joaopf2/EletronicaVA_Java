@@ -18,6 +18,8 @@ package com.eletronica.controller;
 import com.eletronica.dao.UsuarioDAO;           // Classe de acesso ao banco de dados de usuários
 import com.eletronica.model.GrupoUsuarioEntity; // Modelo de Grupo de Usuário
 import com.eletronica.model.UsuarioEntity;      // Modelo/entidade Usuário
+import com.eletronica.util.ScreenManager;
+import com.eletronica.util.ThemeManager;
 import com.eletronica.util.UsuarioSessao;       // Classe que gerencia a sessão do usuário
 
 // Imports do JavaFX
@@ -62,9 +64,15 @@ public class LoginController {
         // Ao clicar no botão "Entrar", executa o método fazerLogin()
         btnEntrar.setOnAction(e -> fazerLogin());
         
-        // Ao clicar no botão "Cancelar", fecha a aplicação completamente
-        btnCancelar.setOnAction(e -> System.exit(0));
+        // Ao clicar no botão "Cancelar", fecha a conexão e encerra a aplicação
+        btnCancelar.setOnAction(e -> {
+            com.eletronica.util.Database.closeConnection();
+            System.exit(0);
+        });
         
+        // Permite avançar para a senha ao pressionar ENTER no email
+        txtEmail.setOnAction(e -> txtSenha.requestFocus());
+
         // Permite fazer login pressionando a tecla ENTER quando o campo senha estiver focado
         // Isso melhora a experiência do usuário (não precisa clicar no botão)
         txtSenha.setOnAction(e -> fazerLogin());
@@ -109,22 +117,15 @@ public class LoginController {
         // ==================== AUTENTICAÇÃO NO BANCO ====================
         
         try {
-            // Busca o usuário no banco pelo email (inclui os dados do grupo)
-            // O método buscarPorEmailComGrupo retorna null se o email não existir
-            UsuarioEntity usuario = usuarioDAO.buscarPorEmailComGrupo(email);
+            // Autentica o usuário: busca pelo email (com os dados do grupo) e
+            // compara a senha digitada com o hash BCrypt armazenado no banco.
+            // Retorna null se o email não existir OU se a senha estiver incorreta.
+            UsuarioEntity usuario = usuarioDAO.autenticar(email, senha);
             
-            // Verifica se o usuário existe
+            // Mensagem genérica de propósito: não revelar se o email existe
+            // (evita enumeração de usuários cadastrados)
             if (usuario == null) {
-                lblMensagem.setText("Usuário não encontrado!");
-                txtEmail.requestFocus();
-                return;
-            }
-            
-            // Verifica se a senha está correta
-            // NOTA: Em um sistema real, a senha deveria estar criptografada (hash)
-            // Aqui estamos comparando texto puro por simplicidade
-            if (!usuario.getSenha().equals(senha)) {
-                lblMensagem.setText("Senha incorreta!");
+                lblMensagem.setText("Email ou senha inválidos!");
                 txtSenha.clear();        // Limpa o campo senha
                 txtSenha.requestFocus(); // Foca novamente no campo senha
                 return;
@@ -172,8 +173,10 @@ public class LoginController {
         Stage stage = new Stage();
         stage.setTitle("Eletrônica - Sistema de Gestão");  // Título da janela
         
-        // Define a cena com tamanho inicial 1200x800 pixels
-        stage.setScene(new Scene(root, 1200, 800));
+        Scene scene = new Scene(root, 1200, 800);
+        ScreenManager.setTelaPrincipal(stage);
+        ThemeManager.registrarCena(scene);
+        stage.setScene(scene);
         
         // Maximiza a janela para ocupar toda a tela
         // O usuário ainda pode restaurar para o tamanho normal se quiser

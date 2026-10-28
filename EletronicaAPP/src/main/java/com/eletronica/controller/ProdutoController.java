@@ -117,6 +117,7 @@ public class ProdutoController {
         if (btnSalvar != null) btnSalvar.setOnAction(e -> salvarProdutos());
         if (btnLimpar != null) btnLimpar.setOnAction(e -> limparCampos());
         if (btnBuscar != null) btnBuscar.setOnAction(e -> buscarProdutos());
+        if (txtBusca != null) txtBusca.setOnAction(e -> buscarProdutos());
         if (btnDeletar != null) btnDeletar.setOnAction(e -> deletarProdutos());
         
         // ==================== LISTENER DA TABELA ====================
@@ -150,13 +151,13 @@ public class ProdutoController {
     }
     
     /**
-     * SALVA UM NOVO PRODUTO NO BANCO DE DADOS
+     * SALVA OU ATUALIZA UM PRODUTO NO BANCO DE DADOS
      * 
      * Este método:
      * 1. Valida se o nome foi preenchido
      * 2. Coleta os dados dos campos do formulário
      * 3. Cria um objeto ProdutoEntity com os dados
-     * 4. Chama o DAO para inserir no banco
+     * 4. Chama o DAO para inserir (novo) ou atualizar (selecionado na tabela)
      * 5. Limpa o formulário e atualiza a tabela
      */
     private void salvarProdutos() {
@@ -169,7 +170,7 @@ public class ProdutoController {
             return;
         }
         
-        String nome = txtNome.getText();
+        String nome = txtNome.getText().trim();
         System.out.println("Nome digitado: '" + nome + "'");
         
         if (nome.isEmpty()) {
@@ -179,11 +180,11 @@ public class ProdutoController {
         
         // ==================== COLETA DOS DADOS ====================
         // Usa operador ternário para evitar NullPointerException
-        String tipo = txtTipo != null ? txtTipo.getText() : "";
-        String modelo = txtModelo != null ? txtModelo.getText() : "";
-        String marca = txtMarca != null ? txtMarca.getText() : "";
-        String categoria = txtCategoria != null ? txtCategoria.getText() : "";
-        String defeito = txtDefeito != null ? txtDefeito.getText() : "";
+        String tipo = txtTipo != null ? txtTipo.getText().trim() : "";
+        String modelo = txtModelo != null ? txtModelo.getText().trim() : "";
+        String marca = txtMarca != null ? txtMarca.getText().trim() : "";
+        String categoria = txtCategoria != null ? txtCategoria.getText().trim() : "";
+        String defeito = txtDefeito != null ? txtDefeito.getText().trim() : "";
         
         // Log para debug
         System.out.println("Dados coletados:");
@@ -203,14 +204,23 @@ public class ProdutoController {
         produto.setCategoria(categoria);
         produto.setDefeito(defeito);
         
-        // ==================== INSERÇÃO NO BANCO ====================
+        // ==================== INSERÇÃO OU ATUALIZAÇÃO NO BANCO ====================
         try {
-            System.out.println("Chamando produtoDAO.inserir()...");
-            produtoDAO.inserir(produto);  // O ID é gerado automaticamente pelo banco
-            System.out.println("INSERIDO COM SUCESSO! ID gerado: " + produto.getId());
-            
-            // Feedback ao usuário
-            mostrarAlerta("Produto salvo com sucesso! ID: " + produto.getId());
+            ProdutoEntity selecionado = tblProdutos != null
+                    ? tblProdutos.getSelectionModel().getSelectedItem()
+                    : null;
+
+            if (selecionado != null && selecionado.getId() > 0) {
+                produto.setId(selecionado.getId());
+                System.out.println("Chamando produtoDAO.atualizar()...");
+                produtoDAO.atualizar(produto);
+                mostrarAlerta("Produto atualizado com sucesso! ID: " + produto.getId());
+            } else {
+                System.out.println("Chamando produtoDAO.inserir()...");
+                produtoDAO.inserir(produto);  // O ID é gerado automaticamente pelo banco
+                System.out.println("INSERIDO COM SUCESSO! ID gerado: " + produto.getId());
+                mostrarAlerta("Produto salvo com sucesso! ID: " + produto.getId());
+            }
             
             // Limpeza e atualização
             limparCampos();      // Limpa o formulário
@@ -241,7 +251,7 @@ public class ProdutoController {
      */
     private void buscarProdutos() {
         try {
-            String nomeBusca = txtBusca != null ? txtBusca.getText() : "";
+            String nomeBusca = txtBusca != null ? txtBusca.getText().trim() : "";
             listaProdutos.clear();
             
             if (nomeBusca.isEmpty()) {
@@ -282,7 +292,7 @@ public class ProdutoController {
         confirm.setContentText("Produto: " + selecionado.getNome());
         
         // Só deleta se o usuário confirmar
-        if (confirm.showAndWait().get() == ButtonType.OK) {
+        if (confirm.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
             try {
                 produtoDAO.deletar(selecionado.getId());
                 mostrarAlerta("Produto deletado!");

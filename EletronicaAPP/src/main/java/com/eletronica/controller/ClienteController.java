@@ -51,6 +51,7 @@ public class ClienteController {
     @FXML private TableColumn<ClienteEntity, String> colTelefone;   // Coluna Telefone
     @FXML private TableColumn<ClienteEntity, String> colCpfCnpj;    // Coluna CPF/CNPJ
     @FXML private TableColumn<ClienteEntity, String> colRg;         // Coluna RG
+    @FXML private TableColumn<ClienteEntity, String> colIe;         // Coluna IE
     
     private ClienteDAO clienteDAO;                      
     private ObservableList<ClienteEntity> listaClientes; // Lista que alimenta a tabela
@@ -79,6 +80,7 @@ public class ClienteController {
         if (colTelefone != null) colTelefone.setCellValueFactory(new PropertyValueFactory<>("telefone"));
         if (colCpfCnpj != null) colCpfCnpj.setCellValueFactory(new PropertyValueFactory<>("cnpjCpf"));
         if (colRg != null) colRg.setCellValueFactory(new PropertyValueFactory<>("rg"));
+        if (colIe != null) colIe.setCellValueFactory(new PropertyValueFactory<>("ie"));
         
         // Carrega todos os clientes do banco e exibe na tabela
         carregarTabela();
@@ -88,6 +90,7 @@ public class ClienteController {
         if (btnSalvar != null) btnSalvar.setOnAction(e -> salvarCliente());
         if (btnLimpar != null) btnLimpar.setOnAction(e -> limparCampos());
         if (btnBuscar != null) btnBuscar.setOnAction(e -> buscarCliente());
+        if (txtBusca != null) txtBusca.setOnAction(e -> buscarCliente());
         if (btnDeletar != null) btnDeletar.setOnAction(e -> deletarCliente());
         
         // CONFIGURAÇÃO DO LISTENER DA TABELA
@@ -120,13 +123,13 @@ public class ClienteController {
     }
     
     /**
-     * SALVA UM NOVO CLIENTE NO BANCO DE DADOS
+     * SALVA OU ATUALIZA UM CLIENTE NO BANCO DE DADOS
      * 
      * Este método:
      * 1. Valida se o nome foi preenchido
      * 2. Coleta os dados dos campos do formulário
      * 3. Cria um objeto ClienteEntity com os dados
-     * 4. Chama o DAO para inserir no banco
+     * 4. Chama o DAO para inserir (novo) ou atualizar (selecionado na tabela)
      * 5. Limpa o formulário e atualiza a tabela
      */
     private void salvarCliente() {
@@ -139,7 +142,7 @@ public class ClienteController {
             return;
         }
         
-        String nome = txtNome.getText();
+        String nome = txtNome.getText().trim();
         System.out.println("Nome digitado: '" + nome + "'");
         
         // VALIDAÇÃO: Nome é obrigatório
@@ -150,11 +153,11 @@ public class ClienteController {
         
         // COLETA DOS DADOS DO FORMULÁRIO
         // Usa operador ternário para evitar NullPointerException
-        String email = txtEmail != null ? txtEmail.getText() : "";
-        String telefone = txtTelefone != null ? txtTelefone.getText() : "";
-        String cpfCnpj = txtCpfCnpj != null ? txtCpfCnpj.getText() : "";
-        String rg = txtRg != null ? txtRg.getText() : "";
-        String ie = txtIe != null ? txtIe.getText() : "";
+        String email = txtEmail != null ? txtEmail.getText().trim() : "";
+        String telefone = txtTelefone != null ? txtTelefone.getText().trim() : "";
+        String cpfCnpj = txtCpfCnpj != null ? txtCpfCnpj.getText().trim() : "";
+        String rg = txtRg != null ? txtRg.getText().trim() : "";
+        String ie = txtIe != null ? txtIe.getText().trim() : "";
         
         // Log para debug
         System.out.println("Dados coletados:");
@@ -174,14 +177,23 @@ public class ClienteController {
         cliente.setRg(rg);
         cliente.setIe(ie);
         
-        // INSERÇÃO NO BANCO DE DADOS
+        // INSERÇÃO OU ATUALIZAÇÃO NO BANCO DE DADOS
         try {
-            System.out.println("Chamando clienteDAO.inserir()...");
-            clienteDAO.inserir(cliente);  // O ID é gerado automaticamente pelo banco
-            System.out.println("INSERIDO COM SUCESSO! ID gerado: " + cliente.getId());
-            
-            // FEEDBACK AO USUÁRIO
-            mostrarAlerta("Cliente salvo com sucesso! ID: " + cliente.getId());
+            ClienteEntity selecionado = tblClientes != null
+                    ? tblClientes.getSelectionModel().getSelectedItem()
+                    : null;
+
+            if (selecionado != null && selecionado.getId() > 0) {
+                cliente.setId(selecionado.getId());
+                System.out.println("Chamando clienteDAO.atualizar()...");
+                clienteDAO.atualizar(cliente);
+                mostrarAlerta("Cliente atualizado com sucesso! ID: " + cliente.getId());
+            } else {
+                System.out.println("Chamando clienteDAO.inserir()...");
+                clienteDAO.inserir(cliente);  // O ID é gerado automaticamente pelo banco
+                System.out.println("INSERIDO COM SUCESSO! ID gerado: " + cliente.getId());
+                mostrarAlerta("Cliente salvo com sucesso! ID: " + cliente.getId());
+            }
             
             // LIMPEZA E ATUALIZAÇÃO
             limparCampos();      // Limpa o formulário
@@ -212,7 +224,7 @@ public class ClienteController {
      */
     private void buscarCliente() {
         try {
-            String nomeBusca = txtBusca != null ? txtBusca.getText() : "";
+            String nomeBusca = txtBusca != null ? txtBusca.getText().trim() : "";
             listaClientes.clear();
             
             if (nomeBusca.isEmpty()) {
@@ -253,7 +265,7 @@ public class ClienteController {
         confirm.setContentText("Cliente: " + selecionado.getNome());
         
         // Só deleta se o usuário confirmar
-        if (confirm.showAndWait().get() == ButtonType.OK) {
+        if (confirm.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
             try {
                 clienteDAO.deletar(selecionado.getId());  // Deleta pelo ID
                 mostrarAlerta("Cliente deletado!");

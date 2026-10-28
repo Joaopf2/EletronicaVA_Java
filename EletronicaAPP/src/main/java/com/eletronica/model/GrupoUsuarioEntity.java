@@ -134,4 +134,17 @@ public class GrupoUsuarioEntity {
     public String toString() {
         return descricao;  // Exibe a descrição (ex: "Administrador", "Técnico")
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GrupoUsuarioEntity that = (GrupoUsuarioEntity) o;
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(id);
+    }
 }
